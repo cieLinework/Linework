@@ -3,12 +3,11 @@ LINEWORK — CIE Ltd. Projects Department
 © 2026 Kahlil Ambrose. All rights reserved.
 """
 
-import os, json, bcrypt, jwt
+import os, json, bcrypt, jwt, requests as req
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import Flask, request, jsonify, make_response, send_from_directory
 from flask_cors import CORS
-from supabase import create_client
 
 # ── Config ────────────────────────────────────────────────────
 SUPABASE_URL      = os.environ.get('SUPABASE_URL', 'https://ugtpdlgxqclhrxgxespl.supabase.co')
@@ -16,27 +15,171 @@ SUPABASE_ANON     = os.environ.get('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR
 SUPABASE_SERVICE  = os.environ.get('SUPABASE_SERVICE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVndHBkbGd4cWNsaHJ4Z3hlc3BsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQzNzcyMywiZXhwIjoyMDg5MDEzNzIzfQ.FNmKD8ghFbb84YBc7xbsfgudqC2_p8PAAzyLrSJg6xw')
 JWT_SECRET        = os.environ.get('JWT_SECRET', 'linework-cie-2026-secret')
 SESSION_DAYS      = 7
+APP_URL           = os.environ.get('APP_URL', 'https://linework.onrender.com')
 
-APP_URL = os.environ.get('APP_URL', 'https://linework--kambrose1.replit.app')
+# ── Supabase REST client (pure requests, no SDK) ──────────────
+class SupabaseTable:
+    def __init__(self, base_url, key, table):
+        self.url     = f"{base_url}/rest/v1/{table}"
+        self.headers = {
+            'apikey':        key,
+            'Authorization': f'Bearer {key}',
+            'Content-Type':  'application/json',
+            'Prefer':        'return=representation'
+        }
+
+    def _h(self, extra=None):
+        h = dict(self.headers)
+        if extra: h.update(extra)
+        return h
+
+    def select(self, cols='*', count=None):
+        self._cols  = cols
+        self._filters = []
+        self._order  = None
+        self._limit_val = None
+        self._count  = count
+        return self
+
+    def eq(self, col, val):
+        self._filters.append(f'{col}=eq.{val}')
+        return self
+
+    def in_(self, col, vals):
+        self._filters.append(f'{col}=in.({",".join(str(v) for v in vals)})')
+        return self
+
+    def gte(self, col, val):
+        self._filters.append(f'{col}=gte.{val}')
+        return self
+
+    def ilike(self, col, val):
+        self._filters.append(f'{col}=ilike.{val}')
+        return self
+
+    def order(self, col, desc=False):
+        self._order = f'{col}.{"desc" if desc else "asc"}'
+        return self
+
+    def limit(self, n):
+        self._limit_val = n
+        return self
+
+    def execute(self):
+        params = {}
+        if hasattr(self, '_cols') and self._cols != '*':
+            params['select'] = self._cols
+        else:
+            params['select'] = getattr(self, '_cols', '*')
+        if hasattr(self, '_order') and self._order:
+            params['order'] = self._order
+        if hasattr(self, '_limit_val') and self._limit_val:
+            params['limit'] = self._limit_val
+        url = self.url
+        for f in getattr(self, '_filters', []):
+            url += ('&' if '?' in url else '?') + f
+        h = self._h()
+        if getattr(self, '_count', None):
+            h['Prefer'] = 'count=exact'
+        r = req.get(url, params=params, headers=h, timeout=15)
+        r.raise_for_status()
+        data = r.json() if r.text else []
+        result = type('R', (), {'data': data if isinstance(data, list) else [data]})()
+        if getattr(self, '_count', None):
+            result.count = int(r.headers.get('content-range', '0/0').split('/')[-1] or 0)
+        return result
+
+    def insert(self, body):
+        self._filters = []
+        self._body = body if isinstance(body, list) else [body]
+        return self
+
+    def update(self, body):
+        self._filters = []
+        self._body = body
+        self._is_update = True
+        return self
+
+    def upsert(self, body):
+        self._filters = []
+        self._body = body if isinstance(body, list) else [body]
+        self._is_upsert = True
+        return self
+
+    def delete(self):
+        self._filters = []
+        self._is_delete = True
+        return self
+
+    def single(self):
+        self._single = True
+        return self
+
+    def _build_filter_url(self):
+        url = self.url
+        for f in getattr(self, '_filters', []):
+            url += ('&' if '?' in url else '?') + f
+        return url
+
+    def _do_execute(self):
+        url = self._build_filter_url()
+        h   = self._h()
+        if getattr(self, '_is_delete', False):
+            r = req.delete(url, headers=h, timeout=15)
+            r.raise_for_status()
+            return type('R', (), {'data': []})()
+        if getattr(self, '_is_update', False):
+            r = req.patch(url, json=self._body, headers=h, timeout=15)
+            r.raise_for_status()
+            data = r.json() if r.text else []
+            if not isinstance(data, list): data = [data]
+            result = type('R', (), {'data': data})()
+            if getattr(self, '_single', False) and data:
+                result.data = data
+            return result
+        if getattr(self, '_is_upsert', False):
+            h2 = self._h({'Prefer': 'return=representation,resolution=merge-duplicates'})
+            r  = req.post(url, json=self._body, headers=h2, timeout=15)
+            r.raise_for_status()
+            data = r.json() if r.text else []
+            if not isinstance(data, list): data = [data]
+            return type('R', (), {'data': data})()
+        # INSERT
+        r = req.post(url, json=self._body, headers=h, timeout=15)
+        r.raise_for_status()
+        data = r.json() if r.text else []
+        if not isinstance(data, list): data = [data]
+        return type('R', (), {'data': data})()
+
+    def __getattr__(self, name):
+        # Allow chaining: .insert().execute(), .update().eq().execute() etc
+        if name == 'execute':
+            return self._do_execute
+        raise AttributeError(name)
+
+class DB:
+    def __init__(self, url, key):
+        self.url = url.rstrip('/')
+        self.key = key
+    def table(self, name):
+        return SupabaseTable(self.url, self.key, name)
+
+db = DB(SUPABASE_URL, SUPABASE_SERVICE)
+print(f'DB ready: {SUPABASE_URL[:40]}...')
 
 app = Flask(__name__, static_folder='static')
 CORS(app, supports_credentials=True)
-db = create_client(SUPABASE_URL, SUPABASE_SERVICE)
 
 @app.route('/health')
 def health():
-    """Health check - shows config status without exposing secrets."""
     try:
-        db.table('users').select('id', count='exact').limit(1).execute()
-        db_status = 'connected'
+        db.table('users').select('id').limit(1).execute()
+        db_ok = 'connected'
     except Exception as e:
-        db_status = f'error: {str(e)[:100]}'
-    return jsonify({
-        'status': 'ok',
-        'supabase_url': SUPABASE_URL[:40] + '...',
-        'db': db_status,
-        'python': __import__('sys').version
-    })
+        db_ok = f'error: {str(e)[:120]}'
+    return jsonify({'status': 'ok', 'db': db_ok, 'url': SUPABASE_URL[:40]})
+
+
 
 
 # ── Auth helpers ──────────────────────────────────────────────
@@ -156,7 +299,8 @@ def auth_register():
 @app.route('/api/auth/setup', methods=['POST'])
 def auth_setup():
     # Only works if no users exist
-    count = db.table('users').select('id', count='exact').execute()
+    count_r = db.table('users').select('id').execute()
+    count = type('C', (), {'count': len(count_r.data)})()
     if count.count and count.count > 0:
         return jsonify({'error': 'Setup already complete'}), 400
 
