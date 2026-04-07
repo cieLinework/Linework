@@ -1,0 +1,3273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linework</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0e12;--s1:#13151c;--s2:#1a1d27;--s3:#22263a;--bd:#2a2f45;--ac:#4f8eff;--ac2:#7c5cfc;--gn:#2dce89;--yw:#ffb800;--rd:#ff4757;--or:#ff7730;--t1:#f0f2ff;--t2:#c8d0ee;--t3:#9aa5cc;--sh:0 4px 24px rgba(0,0,0,.4)}
+html,body{height:100%;font-family:'DM Mono',monospace;background:var(--bg);color:var(--t1);overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--s2)}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+input,select,textarea{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;color:var(--t1);font-family:'DM Mono',monospace;font-size:11px;outline:none;width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+input::placeholder,textarea::placeholder{color:var(--t3)}
+button{cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s}
+.btn{padding:7px 14px;border-radius:8px;border:none;font-size:11px;font-weight:500}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:#3a7af0;transform:translateY(-1px)}
+.btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-g{background:transparent;color:var(--t2);border:1px solid var(--bd)}.btn-g:hover{background:var(--s2);color:var(--t1)}
+.btn-r{background:transparent;color:var(--rd);border:1px solid rgba(255,71,87,.3)}.btn-r:hover{background:rgba(255,71,87,.1)}
+/* Modal */
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal{background:var(--s1);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--sh);max-height:90vh;overflow-y:auto;width:520px;max-width:96vw}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd)}
+.modal-hd h2{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--t1)}
+.modal-ft{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--bd)}
+.form-row{margin-bottom:12px}.form-label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:5px}
+/* Badge */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600}
+/* Progress */
+.pbar{height:4px;background:var(--s3);border-radius:2px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:2px;transition:width .3s}
+/* Toast */
+#toast{position:fixed;bottom:40px;right:20px;z-index:9999;background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:10px 16px;font-size:11px;color:var(--t1);transform:translateY(60px);opacity:0;transition:all .25s;pointer-events:none;max-width:300px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.error{border-color:var(--rd);color:var(--rd)}
+/* Login */
+#loginScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:none;align-items:center;justify-content:center;flex-direction:column}
+#loginScreen.on{display:flex}
+.login-box{background:var(--s1);border:1px solid var(--bd);border-radius:18px;padding:40px;width:380px;max-width:96vw;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.login-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2d3561,#4f8eff);display:flex;align-items:center;justify-content:center;font-size:16px}
+.login-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--ac);letter-spacing:-.5px}
+.login-sub{font-size:10px;color:var(--t3);margin-bottom:28px}
+.user-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--s2);width:100%;margin-bottom:7px;text-align:left}
+.user-btn:hover{border-color:var(--ac);background:var(--s3)}
+.avatar{display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;color:#fff;flex-shrink:0}
+.pin-dots{display:flex;gap:10px;justify-content:center;margin:16px 0}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--bd);background:transparent;transition:all .15s}
+.pin-dot.on{border-color:var(--ac);background:var(--ac)}
+.pin-dot.err{border-color:var(--rd);background:var(--rd);animation:shake .3s}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.pin-key{padding:14px;border-radius:10px;border:1px solid var(--bd);background:var(--s2);color:var(--t1);font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.pin-key:hover{background:var(--s3);border-color:var(--ac)}
+.pin-key:active{transform:scale(.95)}
+.pin-err{color:var(--rd);font-size:10px;text-align:center;min-height:14px;margin-bottom:8px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* Header */
+.header{display:flex;align-items:center;gap:8px;padding:0 16px;height:52px;background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0;z-index:100;position:relative}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-icon{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#2d3561,#4f8eff);display:flex;align-items:center;justify-content:center;font-size:13px}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--ac);letter-spacing:-.5px}
+.tab-btn{padding:5px 11px;border:none;border-radius:7px;background:transparent;color:var(--t3);font-size:10px;font-family:'DM Mono',monospace}
+.tab-btn:hover{background:var(--s2);color:var(--t2)}
+.tab-btn.on{background:var(--s3);color:var(--ac)}
+.hdr-search{position:relative}
+.hdr-search input{width:130px;font-size:10px;padding:5px 10px 5px 26px;transition:width .2s}
+.hdr-search input:focus{width:200px;border-color:var(--ac)}
+.hdr-search-icon{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;color:var(--t3)}
+.search-dd{position:absolute;top:calc(100%+6px);left:0;min-width:280px;background:var(--s1);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--sh);z-index:500;overflow:hidden}
+.search-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--bd);cursor:pointer}
+.search-item:last-child{border-bottom:none}
+.search-item:hover{background:var(--s2)}
+.user-chip{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;border:1px solid var(--bd);background:var(--s2);flex-shrink:0}
+.user-chip:hover{border-color:var(--ac)}
+/* Layout */
+.app-body{display:flex;flex:1;overflow:hidden}
+/* Sidebar */
+.sidebar{width:240px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bd);overflow-y:auto;display:flex;flex-direction:column;height:100%;min-height:0}
+.sidebar-section{padding:10px 14px 4px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3)}
+.proj-btn{display:flex;align-items:flex-start;gap:8px;padding:7px 14px;font-size:11px;border:none;background:transparent;color:var(--t3);width:100%;text-align:left;border-left:2px solid transparent;line-height:1.4}
+.proj-btn:hover{background:var(--s2);color:var(--t2)}
+.proj-btn.on{border-left-color:var(--ac);background:var(--s2);color:var(--t1)}
+/* Stats */
+.stats-bar{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto}
+.stat-card{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px 16px;flex-shrink:0;min-width:110px}
+.stat-label{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:5px}
+.stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+/* Main */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+/* Kanban */
+#view-kanban{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:16px;height:100%}
+.kan-col{flex-shrink:0;width:260px;display:flex;flex-direction:column;background:var(--s1);border:1px solid var(--bd);border-radius:10px;transition:border-color .15s}
+.kan-col.drag-over{border-color:var(--ac);background:rgba(79,142,255,.05)}
+.kan-col-hd{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.kan-col-name{font-size:11px;font-weight:600;color:var(--t2);flex:1}
+.kan-col-count{font-size:9px;background:var(--s3);color:var(--t3);padding:1px 6px;border-radius:10px}
+.kan-cards{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:7px}
+.kan-card{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:10px;cursor:pointer;user-select:none}
+.kan-card:hover{border-color:var(--ac);transform:translateY(-1px)}
+.kan-card.dragging{opacity:.4}
+.card-proj{font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.card-title{font-size:11px;font-weight:500;color:var(--t1);line-height:1.4;margin-bottom:7px}
+.card-footer{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.quick-add{display:flex;gap:6px;padding:7px}
+.quick-add input{font-size:10px;padding:5px 8px}
+.quick-add button{width:26px;height:26px;border-radius:6px;border:none;background:var(--s3);color:var(--t3);font-size:14px;flex-shrink:0}
+.quick-add button:hover{color:var(--ac);background:var(--s2)}
+/* List */
+#view-list{display:flex;flex-direction:column;overflow:hidden;height:100%}
+.list-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap}
+.list-toolbar input,.list-toolbar select{width:auto;font-size:10px;padding:5px 8px}
+.bulk-bar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--s2);border-radius:8px;font-size:10px;color:var(--t3)}
+.list-table-wrap{flex:1;overflow:auto}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);padding:8px 10px;border-bottom:1px solid var(--bd);background:var(--s1);position:sticky;top:0;z-index:5;font-weight:400}
+tbody tr{border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:var(--s2)}
+tbody td{padding:8px 10px;font-size:11px;color:var(--t2)}
+/* Timeline */
+#view-timeline{overflow:auto;padding:16px;height:100%}
+.tl-wrap{min-width:max-content}
+.tl-head-row{display:flex;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--bg);z-index:10}
+.tl-label-col{width:220px;flex-shrink:0;border-right:1px solid var(--bd)}
+.tl-month{border-right:1px solid var(--bd);font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);padding:5px 8px;text-align:center}
+.tl-days-row{display:flex;border-bottom:1px solid var(--bd);position:sticky;top:26px;background:var(--bg);z-index:10}
+.tl-day{border-right:1px solid var(--bd);font-size:8px;color:var(--t3);text-align:center;padding:3px 0;flex-shrink:0}
+.tl-day.today{background:rgba(79,142,255,.15);color:var(--ac);font-weight:700}
+.tl-row{display:flex;border-bottom:1px solid var(--bd)}
+.tl-row:hover{background:var(--s2)}
+.tl-row-label{width:220px;flex-shrink:0;border-right:1px solid var(--bd);padding:7px 10px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.tl-row-area{position:relative;flex:1}
+.tl-bar{position:absolute;top:5px;height:24px;border-radius:6px;cursor:pointer;display:flex;align-items:center;padding:0 7px;overflow:hidden}
+.tl-bar:hover{filter:brightness(1.1)}
+.tl-bar-label{font-size:9px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Overview */
+#view-overview{overflow:auto;padding:16px;height:100%}
+.ov-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ov-toolbar input{width:220px;font-size:10px;padding:5px 8px}
+.ov-proj{background:var(--s1);border:1px solid var(--bd);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.ov-proj:hover{border-color:rgba(79,142,255,.4)}
+.ov-proj-hd{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--s2);cursor:pointer;user-select:none}
+.ov-proj-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--t1);flex:1}
+.ov-task-hd{display:grid;grid-template-columns:26px 1fr 130px 100px 85px 75px 70px;gap:8px;padding:6px 16px;font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:1px solid var(--bd)}
+.ov-task-row{display:grid;grid-template-columns:26px 1fr 130px 100px 85px 75px 70px;gap:8px;padding:8px 16px;font-size:11px;border-bottom:1px solid var(--bd);cursor:pointer;align-items:center;transition:background .1s}
+.ov-task-row:last-child{border-bottom:none}
+.ov-task-row:hover{background:var(--s2)}
+/* Detail panel */
+#detailPanel{position:fixed;top:0;right:-420px;width:400px;height:100vh;background:var(--s1);border-left:1px solid var(--bd);z-index:200;display:flex;flex-direction:column;transition:right .22s ease;box-shadow:-4px 0 20px rgba(0,0,0,.3)}
+#detailPanel.open{right:0;animation:slideIn .22s ease}
+.det-hd{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.det-body{flex:1;overflow-y:auto;padding:16px}
+.det-section{margin-bottom:16px;border-bottom:1px solid var(--bd);padding-bottom:14px}
+.det-section:last-child{border-bottom:none}
+.det-sec-title{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px}
+.det-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+/* Drawing breakdown */
+.dwg-stage{border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.dwg-stage-hd{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--s2);cursor:pointer}
+.dwg-stage-hd:hover{background:var(--s3)}
+.dwg-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid var(--bd);font-size:10px;color:var(--t2)}
+.dwg-item-name{flex:1}
+.dwg-item-name.done{text-decoration:line-through;color:var(--t3)}
+.prog-btns{display:flex;gap:3px}
+.prog-btn{font-size:8px;padding:2px 5px;border-radius:3px;border:none;background:var(--s3);color:var(--t3)}
+.prog-btn:hover{background:var(--s2);color:var(--t2)}
+.prog-btn.active{background:var(--ac);color:#fff}
+/* Comments */
+.comment{display:flex;gap:8px;margin-bottom:10px}
+.comment-body{flex:1;background:var(--s2);border-radius:9px;padding:8px 10px}
+.comment-author{font-size:10px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.comment-text{font-size:11px;color:var(--t2);line-height:1.5}
+.comment-time{font-size:9px;color:var(--t3);margin-top:2px}
+.comment-input-row{display:flex;gap:6px;align-items:flex-end}
+.comment-input-row textarea{resize:none;font-size:11px;padding:7px 10px}
+/* Profile panel */
+#profilePanel{position:fixed;top:52px;right:-300px;width:270px;background:var(--s1);border:1px solid var(--bd);border-radius:0 0 0 12px;z-index:300;transition:right .2s ease;box-shadow:var(--sh);overflow-y:auto;max-height:calc(100vh - 52px)}
+#profilePanel.open{right:0}
+.prof-hd{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.prof-section{padding:12px 16px;border-bottom:1px solid var(--bd)}
+.prof-section:last-child{border-bottom:none}
+.prof-title{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.swatch{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .12s}
+.swatch.on{border-color:#fff;transform:scale(1.2)}
+/* Online dot */
+.online-dot{width:7px;height:7px;border-radius:50%;background:var(--gn);box-shadow:0 0 5px var(--gn);display:inline-block}
+/* Mention dropdown */
+#mentionDrop{position:fixed;z-index:9999;background:var(--s1);border:1px solid var(--bd);border-radius:8px;box-shadow:var(--sh);display:none;overflow:hidden;max-height:200px;overflow-y:auto}
+.mention-item:hover,.mention-item.on{background:var(--s2)}
+/* Subtask check animation */
+.sub-done{text-decoration:line-through;color:var(--t3)}
+/* Recur badge */
+.recur-badge{font-size:9px;color:var(--ac);background:rgba(79,142,255,.1);border:1px solid rgba(79,142,255,.3);padding:2px 8px;border-radius:10px}
+/* Copyright */
+.copyright{position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--s1);border-top:1px solid var(--bd);padding:4px 16px;display:flex;justify-content:space-between;font-size:8px;color:var(--t3);pointer-events:none}
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:6px;padding:5px 16px;background:var(--s2);border-bottom:1px solid var(--bd);font-size:10px;color:var(--t2);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="on">
+  <div class="login-box" style="width:420px">
+    <div class="login-logo">
+      <div class="login-icon">&#x270f;</div>
+      <span class="login-title">LINEWORK</span>
+    </div>
+    <div class="login-sub">CIE Ltd. Projects Department</div>
+
+    <!-- Step 0: Setup wizard (first run only) -->
+    <div id="lStep0" style="display:none">
+      <div style="background:rgba(79,142,255,.08);border:1px solid rgba(79,142,255,.3);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-size:10px;color:var(--t2);line-height:1.7">
+        <strong style="color:var(--t1)">Welcome!</strong> No accounts exist yet. Create the administrator account to get started.
+      </div>
+      <div class="form-row"><label class="form-label">Full Name</label><input id="su_name" placeholder="e.g. Kahlil Ambrose"></div>
+      <div class="form-row"><label class="form-label">Initials (2-3 chars)</label><input id="su_ini" maxlength="3" placeholder="KA" style="text-transform:uppercase"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-row"><label class="form-label">PIN (4 digits)</label><input id="su_pin" type="password" inputmode="numeric" maxlength="4" placeholder="...."></div>
+        <div class="form-row"><label class="form-label">Confirm PIN</label><input id="su_pin2" type="password" inputmode="numeric" maxlength="4" placeholder="...."></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Avatar Colour</label>
+        <div id="su_swatches" class="swatches"></div>
+        <input type="hidden" id="su_color" value="#4f8eff">
+      </div>
+      <div id="su_err" class="pin-err"></div>
+      <button class="btn btn-p" style="width:100%;padding:11px" onclick="completeSetup()">Create Administrator Account</button>
+    </div>
+
+    <!-- Step 1: Home screen — Login + Register buttons + online users -->
+    <div id="lStep1">
+      <!-- Two big action buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+        <button class="btn btn-p" style="padding:14px;font-size:13px;font-weight:700;border-radius:10px" onclick="showUserSelect()">
+          Sign In
+        </button>
+        <button class="btn btn-g" style="padding:14px;font-size:13px;font-weight:700;border-radius:10px" onclick="showRegister()">
+          Register
+        </button>
+      </div>
+
+      <!-- Currently online -->
+      <div style="border-top:1px solid var(--bd);padding-top:14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:10px">Currently Online</div>
+        <div id="onlineLoginList" style="min-height:30px;font-size:11px;color:var(--t3)">Checking...</div>
+      </div>
+
+      <div id="loginStatus" style="text-align:center;padding:8px 0;font-size:10px;color:var(--t3)"></div>
+    </div>
+
+    <!-- Step 1b: User selection (after clicking Sign In) -->
+    <div id="lStep1b" style="display:none">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:10px">Select your profile</div>
+      <div id="userList" style="max-height:260px;overflow-y:auto"></div>
+      <button onclick="showStep1()" style="background:none;border:none;color:var(--t3);font-size:10px;width:100%;text-align:center;padding:8px;margin-top:6px;cursor:pointer">Back</button>
+    </div>
+
+    <!-- Step 1c: Register form -->
+    <div id="lStep1c" style="display:none">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:12px">Create Account</div>
+      <div style="background:rgba(255,183,0,.07);border:1px solid rgba(255,183,0,.3);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-size:10px;color:var(--t2)">
+        Your account will be created but requires administrator approval before you can log in.
+      </div>
+      <div class="form-row"><label class="form-label">Full Name</label><input id="reg_name" placeholder="Your full name"></div>
+      <div class="form-row"><label class="form-label">Initials (2-3 chars)</label><input id="reg_ini" maxlength="3" placeholder="KA" style="text-transform:uppercase"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="form-row"><label class="form-label">PIN (4 digits)</label><input id="reg_pin" type="password" inputmode="numeric" maxlength="4" placeholder="...."></div>
+        <div class="form-row"><label class="form-label">Confirm PIN</label><input id="reg_pin2" type="password" inputmode="numeric" maxlength="4" placeholder="...."></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Colour</label>
+        <div id="reg_swatches" class="swatches"></div>
+        <input type="hidden" id="reg_color" value="#2dce89">
+      </div>
+      <div id="reg_err" class="pin-err"></div>
+      <button class="btn btn-p" style="width:100%;padding:11px;margin-bottom:8px" onclick="submitRegister()">Request Account</button>
+      <button onclick="showStep1()" style="background:none;border:none;color:var(--t3);font-size:10px;width:100%;text-align:center;padding:4px;cursor:pointer">Back</button>
+    </div>
+
+    <!-- Step 2: Enter PIN -->
+    <div id="lStep2" style="display:none">
+      <div id="selUserCard" style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;margin-bottom:16px">
+        <div id="selAvatar" class="avatar" style="width:36px;height:36px;font-size:12px"></div>
+        <div>
+          <div id="selName" style="font-size:12px;font-weight:600;color:var(--t1)"></div>
+          <div style="font-size:9px;color:var(--t3)">Enter your PIN</div>
+        </div>
+      </div>
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+      </div>
+      <div class="pin-pad">
+        <button class="pin-key" onclick="pinKey('1')">1</button>
+        <button class="pin-key" onclick="pinKey('2')">2</button>
+        <button class="pin-key" onclick="pinKey('3')">3</button>
+        <button class="pin-key" onclick="pinKey('4')">4</button>
+        <button class="pin-key" onclick="pinKey('5')">5</button>
+        <button class="pin-key" onclick="pinKey('6')">6</button>
+        <button class="pin-key" onclick="pinKey('7')">7</button>
+        <button class="pin-key" onclick="pinKey('8')">8</button>
+        <button class="pin-key" onclick="pinKey('9')">9</button>
+        <button class="pin-key" onclick="pinClear()" style="font-size:11px;color:var(--t3)">Clear</button>
+        <button class="pin-key" onclick="pinKey('0')">0</button>
+        <button class="pin-key" onclick="pinBack()" style="font-size:16px;color:var(--t3)">&#x232b;</button>
+      </div>
+      <div class="pin-err" id="pinErr"></div>
+      <button onclick="showUserSelect()" style="background:none;border:none;color:var(--t3);font-size:10px;width:100%;text-align:center;padding:4px;cursor:pointer">Back</button>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:8px;color:var(--t3)">&#169; 2026 Kahlil Ambrose &#183; Linework&#8482; &#183; CIE Ltd. Projects Department</div>
+</div>
+
+<!-- PROFILE PANEL -->
+<div id="profilePanel">
+  <div class="prof-hd">
+    <div id="profAvatar" class="avatar" style="width:40px;height:40px;font-size:14px;flex-shrink:0"></div>
+    <div style="flex:1">
+      <div id="profName" style="font-size:13px;font-weight:700;font-family:'Syne',sans-serif;color:var(--t1)"></div>
+      <div style="font-size:9px;color:var(--t3)">CIE Projects Department</div>
+    </div>
+    <button onclick="closeProfile()" style="background:none;border:none;color:var(--t3);font-size:16px">✕</button>
+  </div>
+  <div class="prof-section">
+    <div class="prof-title">Edit Profile</div>
+    <div class="form-row" style="margin-bottom:7px"><input id="profNameIn" placeholder="Name" style="font-size:10px;padding:6px 8px"></div>
+    <div class="form-row" style="margin-bottom:7px"><input id="profIniIn" placeholder="Initials" maxlength="3" style="font-size:10px;padding:6px 8px;text-transform:uppercase"></div>
+    <div class="form-row" style="margin-bottom:7px"><input id="profEmailIn" type="email" placeholder="Email (for notifications)" style="font-size:10px;padding:6px 8px"></div>
+    <div class="form-row" style="margin-bottom:8px">
+      <div class="prof-title" style="margin-bottom:5px">Colour</div>
+      <div id="profSwatches" class="swatches"></div>
+      <input type="hidden" id="profColor">
+    </div>
+    <button class="btn btn-p" style="width:100%;font-size:10px;padding:7px" onclick="saveProfile()">Save Changes</button>
+  </div>
+  <div class="prof-section">
+    <div class="prof-title">Change PIN</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <input id="curPin" type="password" inputmode="numeric" maxlength="4" placeholder="Current PIN" style="font-size:10px;padding:6px 8px">
+      <input id="newPin" type="password" inputmode="numeric" maxlength="4" placeholder="New PIN (4 digits)" style="font-size:10px;padding:6px 8px">
+      <input id="confPin" type="password" inputmode="numeric" maxlength="4" placeholder="Confirm new PIN" style="font-size:10px;padding:6px 8px">
+      <button class="btn btn-g" style="font-size:10px;padding:6px" onclick="changePin()">Update PIN</button>
+    </div>
+  </div>
+  <div class="prof-section">
+    <div class="prof-title"><span class="online-dot"></span> &nbsp;Who's Online</div>
+    <div id="onlineList" style="font-size:10px;color:var(--t3)">Loading…</div>
+  </div>
+  <div class="prof-section">
+    <button class="btn btn-r" style="width:100%;font-size:10px;padding:7px" onclick="signOut()">Sign Out</button>
+  </div>
+</div>
+
+<!-- TEAM MODAL -->
+<div class="overlay" id="teamModal" style="display:none">
+  <div class="modal" style="width:500px">
+    <div class="modal-hd"><h2>👥 Team Members</h2><button onclick="closeModal('teamModal')" style="background:none;border:none;color:var(--t3);font-size:18px">✕</button></div>
+    <div id="teamList" style="max-height:300px;overflow-y:auto;border-bottom:1px solid var(--bd)"></div>
+    <div style="padding:14px 20px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px">Add Team Member</div>
+      <div style="display:grid;grid-template-columns:1fr 70px 90px;gap:8px;margin-bottom:8px">
+        <input id="tm_name" placeholder="Full name" style="font-size:10px;padding:6px 8px">
+        <input id="tm_ini" placeholder="Ini" maxlength="3" style="font-size:10px;padding:6px 8px;text-transform:uppercase">
+        <input id="tm_pin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" style="font-size:10px;padding:6px 8px">
+      </div>
+      <div style="margin-bottom:8px">
+        <input id="tm_email" placeholder="Email (optional)" style="font-size:10px;padding:6px 8px">
+      </div>
+      <div class="swatches" id="tmSwatches" style="margin-bottom:10px"></div>
+      <input type="hidden" id="tm_color" value="#4f8eff">
+      <button class="btn btn-p" style="font-size:10px;padding:7px 14px" onclick="teamAddUser()">Add Member</button>
+    </div>
+    <div class="modal-ft"><button class="btn btn-g" onclick="closeModal('teamModal')">Done</button></div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="overlay" id="statusModal" style="display:none">
+  <div class="modal" style="width:480px">
+    <div class="modal-hd"><h2>⬡ Statuses & Priorities</h2><button onclick="closeModal('statusModal')" style="background:none;border:none;color:var(--t3);font-size:18px">✕</button></div>
+    <div style="padding:16px 20px;max-height:65vh;overflow-y:auto">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px">Statuses</div>
+      <div id="statusList" style="margin-bottom:20px"></div>
+      <div style="border-top:1px solid var(--bd);padding-top:14px;margin-bottom:14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px">Add Status</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="ns_name" placeholder="Status name" style="font-size:10px;padding:6px 8px">
+          <input type="color" id="ns_color" value="#4f8eff" style="width:36px;height:30px;border-radius:6px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;padding:2px">
+          <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t2);cursor:pointer;white-space:nowrap">
+            <input type="checkbox" id="ns_done" style="accent-color:var(--ac)"> Done
+          </label>
+          <button class="btn btn-p" style="font-size:10px;padding:6px 10px;white-space:nowrap" onclick="addStatus()">Add</button>
+        </div>
+      </div>
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px">Priorities</div>
+      <div id="priorityList" style="margin-bottom:14px"></div>
+      <div style="border-top:1px solid var(--bd);padding-top:14px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px">Add Priority</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="np_name" placeholder="Priority name" style="font-size:10px;padding:6px 8px">
+          <input type="color" id="np_color" value="#ffb800" style="width:36px;height:30px;border-radius:6px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;padding:2px">
+          <button class="btn btn-p" style="font-size:10px;padding:6px 10px;white-space:nowrap" onclick="addPriority()">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-g" onclick="closeModal('statusModal')">Done</button></div>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<!-- REPORT MODAL -->
+<div class="overlay" id="reportModal" style="display:none">
+  <div class="modal" style="width:600px;max-height:90vh">
+    <div class="modal-hd">
+      <h2>Weekly Status Report</h2>
+      <button onclick="closeModal('reportModal')" style="background:none;border:none;color:var(--t3);font-size:18px">x</button>
+    </div>
+    <div style="padding:14px 20px;border-bottom:1px solid var(--bd);display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <div style="flex:1;min-width:140px">
+        <label class="form-label">Project</label>
+        <select id="rpt_proj" onchange="buildReport()" style="font-size:10px;padding:5px 8px;width:100%">
+          <option value="all">All Projects</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:140px">
+        <label class="form-label">Prepared by</label>
+        <input id="rpt_from" placeholder="Your name" oninput="buildReport()" style="font-size:10px;padding:5px 8px">
+      </div>
+      <div style="flex:1;min-width:140px">
+        <label class="form-label">Email to</label>
+        <input id="rpt_email" type="email" placeholder="recipient@email.com" style="font-size:10px;padding:5px 8px">
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-g" style="font-size:10px;padding:6px 10px" onclick="saveReportImage()">Save as Image</button>
+        <button class="btn btn-p" style="font-size:10px;padding:6px 10px" onclick="sendReport()">Email</button>
+      </div>
+    </div>
+    <div style="overflow-y:auto;max-height:calc(90vh - 130px)">
+      <div id="rptPreview" style="background:#fff;padding:32px;font-family:Georgia,serif;color:#111;min-height:400px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE MODAL -->
+<div class="overlay" id="templateModal" style="display:none">
+  <div class="modal" style="width:580px">
+    <div class="modal-hd"><h2>Task Templates</h2><button onclick="closeModal('templateModal')" style="background:none;border:none;color:var(--t3);font-size:18px">x</button></div>
+    <div id="tmplList" style="max-height:240px;overflow-y:auto;border-bottom:1px solid var(--bd)"></div>
+    <div style="padding:12px 20px;border-bottom:1px solid var(--bd)">
+      <button class="btn btn-g" style="font-size:10px;width:100%" onclick="toggleTemplateForm()">+ Create New Template</button>
+      <div id="tmplCreateForm" style="display:none;margin-top:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div><label class="form-label">Template Name *</label><input id="tmpl_name" placeholder="e.g. Residential Design" style="font-size:10px;padding:6px 8px"></div>
+          <div><label class="form-label">Category</label><input id="tmpl_cat" placeholder="e.g. Design, Tender, BOQ" style="font-size:10px;padding:6px 8px"></div>
+        </div>
+        <div style="margin-bottom:10px"><label class="form-label">Description</label><input id="tmpl_desc" placeholder="Brief description..." style="font-size:10px;padding:6px 8px"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <label class="form-label" style="margin:0">Tasks</label>
+          <button onclick="addTemplateTaskRow()" style="font-size:9px;padding:3px 10px;background:var(--ac);border:none;border-radius:5px;color:#fff;cursor:pointer">+ Add Task</button>
+        </div>
+        <div id="tmplTaskRows" style="max-height:160px;overflow-y:auto;margin-bottom:10px"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-g" style="font-size:10px" onclick="toggleTemplateForm()">Cancel</button>
+          <button class="btn btn-p" style="font-size:10px" onclick="saveTemplate()">Save Template</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <div style="font-size:10px;color:var(--t3);flex:1">Select a project first, then click Apply to create tasks from a template.</div>
+      <button class="btn btn-g" onclick="closeModal('templateModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENTION DROPDOWN -->
+<div id="mentionDrop"></div>
+
+<!-- ADMIN MODAL -->
+<div class="overlay" id="adminModal" style="display:none">
+  <div class="modal" style="width:540px">
+    <div class="modal-hd"><h2>🔐 Admin — User Management</h2><button onclick="closeModal('adminModal')" style="background:none;border:none;color:var(--t3);font-size:18px">✕</button></div>
+    <div id="adminUserList" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--bd)"></div>
+    <div style="padding:16px 20px">
+      <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:10px">Add New User</div>
+      <div style="display:grid;grid-template-columns:1fr 80px 90px;gap:8px;margin-bottom:8px">
+        <input id="adm_name" placeholder="Full name" style="font-size:10px;padding:6px 8px">
+        <input id="adm_ini" placeholder="Ini" maxlength="3" style="font-size:10px;padding:6px 8px;text-transform:uppercase">
+        <input id="adm_pin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" style="font-size:10px;padding:6px 8px">
+      </div>
+      <div class="swatches" id="admSwatches" style="margin-bottom:10px"></div>
+      <input type="hidden" id="adm_color" value="#4f8eff">
+      <button class="btn btn-p" style="font-size:10px;padding:7px 14px" onclick="adminAddUser()">Add User</button>
+    </div>
+    <div class="modal-ft"><button class="btn btn-g" onclick="closeModal('adminModal')">Done</button></div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="overlay" id="taskModal" style="display:none">
+  <div class="modal" style="width:540px">
+    <div class="modal-hd"><h2 id="taskModalTitle">New Task</h2><button onclick="closeModal('taskModal')" style="background:none;border:none;color:var(--t3);font-size:18px">✕</button></div>
+    <div style="padding:16px 20px;max-height:65vh;overflow-y:auto">
+      <div class="form-row"><label class="form-label">Task Title *</label><input id="t_title" placeholder="What needs to be done?"></div>
+      <div class="form-row"><label class="form-label">Description</label><textarea id="t_desc" rows="2" placeholder="Notes, scope…" style="resize:none"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-row"><label class="form-label">Project</label><select id="t_proj"><option value="">— No project —</option></select></div>
+        <div class="form-row"><label class="form-label">Assignee</label><select id="t_assign"><option value="">— Unassigned —</option></select></div>
+        <div class="form-row"><label class="form-label">Status</label><select id="t_status"></select></div>
+        <div class="form-row"><label class="form-label">Priority</label><select id="t_pri"><option value="">— None —</option></select></div>
+        <div class="form-row"><label class="form-label">Start Date</label><input type="date" id="t_start"></div>
+        <div class="form-row"><label class="form-label">Due Date</label><input type="date" id="t_due"></div>
+      </div>
+      <div class="form-row"><label class="form-label">Progress — <span id="t_prog_val">0</span>%</label><input type="range" id="t_prog" min="0" max="100" value="0" style="width:100%;accent-color:var(--ac)" oninput="document.getElementById('t_prog_val').textContent=this.value"></div>
+      <div class="form-row">
+        <label class="form-label">File Reference</label>
+        <input id="t_cad" placeholder="Filename, server path, or https:// link" oninput="updateFileRefPreview()">
+        <div id="t_cad_preview" style="margin-top:5px;font-size:10px;display:none"></div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Recurring</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="t_recur_type" style="font-size:10px;padding:5px 8px;flex:1" onchange="toggleRecurInterval()">
+            <option value="">Does not repeat</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <div id="t_recur_interval_wrap" style="display:none;display:flex;align-items:center;gap:5px">
+            <span style="font-size:10px;color:var(--t3)">every</span>
+            <input type="number" id="t_recur_interval" min="1" max="52" value="1" style="width:52px;font-size:10px;padding:5px 7px">
+            <span id="t_recur_unit" style="font-size:10px;color:var(--t3)">week(s)</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Blocked</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="block_reason" id="br_none" value="" checked onchange="toggleBlockDesc()" style="accent-color:var(--ac)"> Not Blocked
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="block_reason" id="br_agency" value="Agency" onchange="toggleBlockDesc()" style="accent-color:var(--ac)"> Agency
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="block_reason" id="br_rayneau" value="Rayneau" onchange="toggleBlockDesc()" style="accent-color:var(--ac)"> Rayneau
+          </label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);cursor:pointer">
+            <input type="radio" name="block_reason" id="br_custom" value="Custom" onchange="toggleBlockDesc()" style="accent-color:var(--ac)"> Custom
+          </label>
+        </div>
+        <textarea id="t_block_desc" placeholder="Describe what is blocking this task..." rows="2"
+          style="display:none;resize:none;font-size:11px;padding:7px 10px"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-g" onclick="closeModal('taskModal')">Cancel</button>
+      <button class="btn btn-p" id="taskSaveBtn" onclick="saveTask()">Create Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="overlay" id="projModal" style="display:none">
+  <div class="modal" style="width:500px">
+    <div class="modal-hd"><h2>📁 Projects</h2><button onclick="closeModal('projModal')" style="background:none;border:none;color:var(--t3);font-size:18px">✕</button></div>
+    <div id="projList" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--bd)"></div>
+    <div id="projFormWrap" style="padding:14px 20px">
+      <button class="btn btn-g" style="font-size:10px;width:100%" onclick="toggleProjForm()">+ Add New Project</button>
+      <div id="projForm" style="display:none;margin-top:12px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="form-row" style="grid-column:1/-1"><label class="form-label">Project Name *</label><input id="pf_name" placeholder="Project name"></div>
+          <div class="form-row" style="grid-column:1/-1"><label class="form-label">Description</label><textarea id="pf_desc" rows="2" style="resize:none;font-size:10px"></textarea></div>
+          <div class="form-row"><label class="form-label">Start Date</label><input type="date" id="pf_start"></div>
+          <div class="form-row"><label class="form-label">End Date</label><input type="date" id="pf_end"></div>
+        </div>
+        <div class="form-row"><label class="form-label">Colour</label><div id="pf_swatches" class="swatches"></div><input type="hidden" id="pf_color" value="#4f8eff"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+          <button class="btn btn-g" style="font-size:10px" onclick="toggleProjForm()">Cancel</button>
+          <button class="btn btn-p" style="font-size:10px" onclick="saveProject()">Create Project</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-g" onclick="closeModal('projModal')">Done</button></div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div id="detailPanel">
+  <div class="det-hd">
+    <button class="btn btn-g" style="font-size:10px;padding:5px 10px" onclick="editCurrentTask()">✏ Edit</button>
+    <button class="btn btn-r" style="font-size:10px;padding:5px 10px" onclick="deleteCurrentTask()">🗑 Delete</button>
+    <button class="btn btn-g" style="font-size:10px;padding:5px 10px" onclick="duplicateCurrentTask()">⧉ Dup</button>
+    <button onclick="closeDetail()" style="background:none;border:none;color:var(--t3);font-size:18px;margin-left:auto">✕</button>
+  </div>
+  <div class="det-body" id="detBody"></div>
+</div>
+
+<!-- MAIN APP (hidden until logged in) -->
+<div id="app" style="display:none;flex-direction:column;height:100vh">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">✏</div>
+      <span class="logo-text">LINEWORK</span>
+    </div>
+    <div style="display:flex;gap:2px;align-items:center">
+      <button class="tab-btn on" onclick="switchView('kanban',this)">⊞ Kanban</button>
+      <button class="tab-btn" onclick="switchView('timeline',this)">▬ Timeline</button>
+      <button class="tab-btn" onclick="switchView('list',this)">≡ List</button>
+      <button class="tab-btn" onclick="switchView('overview',this)">📋 Overview</button>
+      <button id="kanbanLayoutBtn" title="Toggle kanban layout" onclick="toggleKanbanLayout()" style="display:none;margin-left:4px;background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--t3);font-size:10px;padding:4px 8px;cursor:pointer">Horizontal</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+      <div class="hdr-search">
+        <span class="hdr-search-icon">🔍</span>
+        <input id="gSearch" placeholder="Search…" oninput="onSearch()" onfocus="onSearch()" onblur="setTimeout(()=>document.getElementById('searchDD').style.display='none',200)">
+        <div id="searchDD" class="search-dd" style="display:none"></div>
+      </div>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px" onclick="openModal('projModal');renderProjList()" title="Projects">📁</button>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px" onclick="openTeamModal()" title="Team">👥</button>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px" onclick="openStatusModal()" title="Statuses & Priorities">⬡</button>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px" onclick="openReportModal()" title="Weekly Report">📧</button>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px" onclick="exportData()" title="Export backup">⬇</button>
+      <label class="btn btn-g" style="font-size:11px;padding:5px 9px;cursor:pointer" title="Import backup">⬆<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+      <button class="btn btn-g" style="font-size:11px;padding:5px 9px;position:relative" id="adminBtn" onclick="openAdminModal()" title="Admin" style="display:none">&#x1F510;<span id="pendingBadge" style="display:none;position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;background:var(--rd);color:#fff;font-size:8px;font-weight:700;align-items:center;justify-content:center">!</span></button>
+      <div class="user-chip" onclick="toggleProfile()" style="cursor:pointer">
+        <div id="hdrAvatar" class="avatar" style="width:20px;height:20px;font-size:8px"></div>
+        <span id="hdrName" style="font-size:10px;font-weight:600;color:var(--t1)"></span>
+      </div>
+      <button class="btn btn-p" style="font-size:10px;padding:6px 12px" onclick="openTaskModal(null)">+ Task</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar" style="padding-bottom:60px">
+      <div class="sidebar-section">Projects</div>
+      <button class="proj-btn on" id="proj-all" onclick="setProject('all',this)">
+        <span style="flex:1;font-size:11px;font-weight:600">All Projects</span>
+        <span id="count-all" class="kan-col-count"></span>
+      </button>
+      <div id="projBtns"></div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main" id="mainArea">
+      <!-- Stats -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-val" id="st-total">0</div></div>
+        <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-val" id="st-done" style="color:var(--gn)">0%</div></div>
+        <div class="stat-card"><div class="stat-label">In Progress</div><div class="stat-val" id="st-inprog" style="color:var(--ac)">0</div></div>
+        <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-val" id="st-overdue" style="color:var(--rd)">0</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Progress</div><div class="stat-val" id="st-avg" style="color:var(--ac2)">0%</div></div>
+      </div>
+      <!-- Filter bar -->
+      <div class="filter-bar" id="filterBar" style="display:none">
+        <div id="filterDot" style="width:8px;height:8px;border-radius:50%"></div>
+        <span id="filterName" style="font-weight:600"></span>
+        <button onclick="setProject('all',document.getElementById('proj-all'))" style="background:none;border:none;color:var(--t3);font-size:10px;margin-left:auto;cursor:pointer">✕ Clear</button>
+      </div>
+      <!-- Views -->
+      <div style="flex:1;overflow:hidden;position:relative">
+        <div id="view-kanban"  style="height:100%;overflow:hidden"></div>
+        <div id="view-timeline" style="display:none;height:100%;overflow:auto"></div>
+        <div id="view-list"   style="display:none;height:100%;overflow:hidden;display:none;flex-direction:column"></div>
+        <div id="view-overview" style="display:none;height:100%;overflow:auto"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div class="copyright">
+  <span>© 2026 Kahlil Ambrose · CIE Ltd. Projects Department</span>
+  <span>Linework™ — Proprietary. Unauthorised use prohibited.</span>
+</div>
+
+<script>
+// ==============================================================
+// STATE
+// ==============================================================
+const SWATCHES=['#4f8eff','#7c5cfc','#2dce89','#ffb800','#ff4757','#ff7730','#e91e8c','#00c9b1','#b000ff','#a0a8c0']
+const PRIORITY_COLORS={'Low':'#2dce89','Medium':'#ffb800','High':'#ff7730','Critical':'#ff4757','RAYNEAU':'#b000ff'}
+const STAGE_TEMPLATES={
+  site:{icon:'',label:'Site Drawings'},architectural:{icon:'',label:'Architectural'},
+  structural:{icon:'',label:'Structural'},electrical:{icon:'',label:'Electrical'},
+  plumbing:{icon:'',label:'Plumbing'}
+}
+
+let state={
+  user:null, tasks:[], projects:[], users:[], statuses:[], priorities:[],
+  activeProject:'all', currentView:'kanban', editingTaskId:null,
+  selectedTaskId:null, dragId:null
+}
+
+// ==============================================================
+// UTILS
+// ==============================================================
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast')
+  el.textContent=msg; el.className='show'+(type==='error'?' error':'')
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2600)
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function pc(p){return PRIORITY_COLORS[p]||'#9aa5cc'}
+function isDone(s){return (state.statuses.find(x=>x.name===s)||{}).is_done}
+function statusColor(s){return (state.statuses.find(x=>x.name===s)||{}).color||'#4a5275'}
+function filteredTasks(){return state.activeProject==='all'?state.tasks:state.tasks.filter(t=>t.project_id===state.activeProject)}
+function health(projId){
+  const ts=state.tasks.filter(t=>t.project_id===projId); if(!ts.length) return 'none'
+  if(ts.some(t=>t.due_date&&!isDone(t.status)&&new Date(t.due_date)<new Date())) return 'red'
+  if(ts.some(t=>t.status!=='Backlog'&&!isDone(t.status))) return 'yellow'
+  return 'green'
+}
+const HEALTH_COLORS={red:'#ff4757',yellow:'#ffb800',green:'#2dce89',none:'#9aa5cc'}
+
+async function api(path,opts={}){
+  const r=await fetch(path,{...opts,headers:{'Content-Type':'application/json',...(opts.headers||{})}})
+  const data=await r.json()
+  if(!r.ok) throw new Error(data.error||'Request failed')
+  return data
+}
+function closeModal(id){document.getElementById(id).style.display='none'}
+function openModal(id){document.getElementById(id).style.display='flex'}
+
+// ==============================================================
+// BOOT
+// ==============================================================
+async function boot(){
+  const screen = document.getElementById('loginScreen')
+  const list   = document.getElementById('userList')
+
+  // Always show login screen immediately
+  screen.classList.add('on')
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Connecting...</div>'
+
+  // Step 1: check existing session
+  let sessionUser = null
+  try {
+    const res = await fetch('/api/auth/check')
+    const s   = await res.json()
+    if(s.user) sessionUser = s.user
+  } catch(e) {
+    console.error('Session check error:', e)
+  }
+
+  if(sessionUser){
+    state.user = sessionUser
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Loading your workspace...</div>'
+    try {
+      await loadAll()
+      screen.classList.remove('on')
+      document.getElementById('app').style.display='flex'
+      updateHeaderUser(); renderSidebar(); renderStats(); renderView()
+      setInterval(()=>fetch('/api/presence',{method:'POST'}), 30000)
+      fetch('/api/presence',{method:'POST'})
+    } catch(e) {
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--rd);font-size:11px">Error loading data.<br>Please refresh.</div>'
+    }
+    return
+  }
+
+  // Step 2: fetch user list for login screen
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Loading accounts...</div>'
+  try {
+    const res   = await fetch('/api/users')
+    const users = await res.json()
+    console.log('Users fetched:', users)
+
+    if(!Array.isArray(users)){
+      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--rd);font-size:11px">Server error: ' + JSON.stringify(users) + '</div>'
+      return
+    }
+    if(users.length === 0){
+      // No accounts yet - show setup wizard
+      showStep0()
+    } else {
+      renderLoginUsers(users)
+      showStep1()
+    }
+  } catch(e) {
+    console.error('User fetch error:', e)
+    list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--rd);font-size:11px">Cannot reach server.<br>' + e.message + '<br><br><button onclick="boot()" style="background:var(--ac);color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:11px">Retry</button></div>'
+  }
+}
+
+function showApp(){
+  document.getElementById('loginScreen').classList.remove('on')
+  const app=document.getElementById('app'); app.style.display='flex'
+  updateHeaderUser()
+  renderSidebar(); renderStats(); renderView()
+  checkPendingBadge()
+  setInterval(()=>fetch('/api/presence',{method:'POST'}), 30000)
+  fetch('/api/presence',{method:'POST'})
+}
+
+async function loadAll(){
+  const [tasks,projects,users,statuses,priorities]=await Promise.all([
+    api('/api/tasks'),api('/api/projects'),api('/api/users'),
+    api('/api/statuses'),api('/api/priorities')
+  ])
+  state.tasks=tasks; state.projects=projects; state.users=users
+  state.statuses=statuses; state.priorities=priorities
+}
+
+function updateHeaderUser(){
+  const u=state.user; if(!u) return
+  const av=document.getElementById('hdrAvatar')
+  av.style.background=u.color; av.textContent=u.initials
+  document.getElementById('hdrName').textContent=u.name.split(' ')[0]
+  const isAdmin = u.is_admin || u.isAdmin
+  const ab=document.getElementById('adminBtn')
+  if(ab) ab.style.display=isAdmin?'inline-flex':'none'
+  checkPendingBadge()
+}
+
+// ==============================================================
+// LOGIN
+// ==============================================================
+let pinBuffer='', selUser=null
+
+function showStep0(){
+  document.getElementById('loginScreen').classList.add('on')
+  document.getElementById('lStep0').style.display='block'
+  document.getElementById('lStep1').style.display='none'
+  document.getElementById('lStep2').style.display='none'
+  // Render swatches
+  const sw=document.getElementById('su_swatches')
+  sw.innerHTML=SWATCHES.map(c=>`<div class="swatch${c===document.getElementById('su_color').value?' on':''}" data-color="${c}" style="background:${c}" onclick="selectSetupColor('${c}')"></div>`).join('')
+}
+function selectSetupColor(c){
+  document.getElementById('su_color').value=c
+  document.querySelectorAll('#su_swatches .swatch').forEach(s=>{
+    s.classList.toggle('on',s.dataset.color===c)
+  })
+}
+
+async function completeSetup(){
+  const name=document.getElementById('su_name').value.trim()
+  const ini=document.getElementById('su_ini').value.trim().toUpperCase()
+  const pin=document.getElementById('su_pin').value
+  const pin2=document.getElementById('su_pin2').value
+  const color=document.getElementById('su_color').value
+  const err=document.getElementById('su_err')
+  if(!name){err.textContent='Enter your full name';return}
+  if(ini.length<2){err.textContent='Initials must be 2\u20133 characters';return}
+  if(!/^\d{4}$/.test(pin)){err.textContent='PIN must be exactly 4 digits';return}
+  if(pin!==pin2){err.textContent='PINs do not match';return}
+  err.textContent=''
+  try{
+    await api('/api/auth/setup',{method:'POST',body:JSON.stringify({name,initials:ini,color,pin})})
+    const s=await fetch('/api/auth/check').then(r=>r.json())
+    state.user=s.user
+    await loadAll()
+    showApp()
+    toast('Welcome to Linework, '+name.split(' ')[0]+'! Add your team via \u1F510 Admin.')
+  }catch(e){err.textContent=e.message}
+}
+
+function renderLoginUsers(users){
+  // Only show approved (non-pending) users on the login screen
+  const active = (users||[]).filter(u => u.email !== 'PENDING_APPROVAL')
+  if(!active.length){
+    document.getElementById('userList').innerHTML='<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">No active accounts found.<br>Please contact your administrator.</div>'
+    return
+  }
+  document.getElementById('userList').innerHTML=active.map(u=>{
+    const data = encodeURIComponent(JSON.stringify(u))
+    return '<button class="user-btn" onclick="selectUserEncoded(\'' + data + '\')">'+
+      '<div class="avatar" style="width:36px;height:36px;font-size:12px;background:'+u.color+'">'+esc(u.initials)+'</div>'+
+      '<div>'+
+        '<div style="font-size:12px;font-weight:600;color:var(--t1)">'+esc(u.name)+'</div>'+
+        '<div style="font-size:9px;color:var(--t3)">'+(u.is_admin?'Administrator':'Team Member')+'</div>'+
+      '</div>'+
+    '</button>'
+  }).join('')
+}
+
+function selectUser(jsonStr){
+  selUser=JSON.parse(jsonStr); pinBuffer=''
+  document.getElementById('selAvatar').style.background=selUser.color
+  document.getElementById('selAvatar').textContent=selUser.initials
+  document.getElementById('selName').textContent=selUser.name
+  document.getElementById('pinErr').textContent=''
+  updateDots()
+  showStep2()
+}
+
+function showStep1(){
+  // Home screen with Sign In / Register buttons
+  document.getElementById('loginScreen').classList.add('on')
+  document.getElementById('lStep0').style.display='none'
+  document.getElementById('lStep1').style.display='block'
+  document.getElementById('lStep1b').style.display='none'
+  document.getElementById('lStep1c').style.display='none'
+  document.getElementById('lStep2').style.display='none'
+  loadOnlineLoginList()
+}
+function showUserSelect(){
+  // Show list of users to pick from
+  document.getElementById('lStep1').style.display='none'
+  document.getElementById('lStep1b').style.display='block'
+  document.getElementById('lStep1c').style.display='none'
+  document.getElementById('lStep2').style.display='none'
+}
+function showRegister(){
+  document.getElementById('lStep1').style.display='none'
+  document.getElementById('lStep1b').style.display='none'
+  document.getElementById('lStep1c').style.display='block'
+  document.getElementById('lStep2').style.display='none'
+  // Render register swatches
+  const cur = document.getElementById('reg_color').value
+  document.getElementById('reg_swatches').innerHTML = SWATCHES.map(c =>
+    '<div class="swatch' + (c===cur?' on':'') + '" data-color="' + c + '" style="background:' + c + '" onclick="pickRegColor(this,\'' + c + '\')"></div>'
+  ).join('')
+}
+function showStep2(){
+  document.getElementById('loginScreen').classList.add('on')
+  document.getElementById('lStep0').style.display='none'
+  document.getElementById('lStep1').style.display='none'
+  document.getElementById('lStep1b').style.display='none'
+  document.getElementById('lStep1c').style.display='none'
+  document.getElementById('lStep2').style.display='block'
+}
+async function loadOnlineLoginList(){
+  const el = document.getElementById('onlineLoginList')
+  if(!el) return
+  try {
+    const res = await fetch('/api/presence')
+    const online = await res.json()
+    if(!Array.isArray(online) || online.length === 0){
+      el.innerHTML = '<span style="color:var(--t3);font-size:10px">No one online right now</span>'
+      return
+    }
+    el.innerHTML = online.map(u =>
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<div style="width:7px;height:7px;border-radius:50%;background:#2dce89;box-shadow:0 0 5px #2dce89"></div>' +
+      '<div class="avatar" style="width:22px;height:22px;font-size:8px;background:' + u.color + '">' + u.initials + '</div>' +
+      '<span style="font-size:11px;color:var(--t2)">' + u.user_name + '</span>' +
+      '</div>'
+    ).join('')
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--t3);font-size:10px">-</span>'
+  }
+}
+async function submitRegister(){
+  const name     = document.getElementById('reg_name').value.trim()
+  const initials = document.getElementById('reg_ini').value.trim().toUpperCase()
+  const pin      = document.getElementById('reg_pin').value
+  const pin2     = document.getElementById('reg_pin2').value
+  const color    = document.getElementById('reg_color').value
+  const err      = document.getElementById('reg_err')
+  err.textContent = ''
+  if(!name)                         { err.textContent='Enter your full name'; return }
+  if(initials.length < 2)           { err.textContent='Initials must be 2-3 characters'; return }
+  if(!/^\d{4}$/.test(pin))          { err.textContent='PIN must be exactly 4 digits'; return }
+  if(pin !== pin2)                  { err.textContent='PINs do not match'; return }
+  try {
+    await api('/api/auth/register', {method:'POST', body:JSON.stringify({name, initials, color, pin})})
+    err.style.color='var(--gn)'
+    err.textContent='Account requested! An administrator will activate it shortly.'
+    document.getElementById('reg_name').value=''
+    document.getElementById('reg_ini').value=''
+    document.getElementById('reg_pin').value=''
+    document.getElementById('reg_pin2').value=''
+    setTimeout(()=>showStep1(), 3000)
+  } catch(e) {
+    err.textContent = e.message
+  }
+}
+
+function pinKey(n){
+  if(pinBuffer.length>=4) return
+  pinBuffer+=n; updateDots()
+  if(pinBuffer.length===4) setTimeout(attemptLogin,150)
+}
+function pinBack(){pinBuffer=pinBuffer.slice(0,-1);updateDots()}
+function pinClear(){pinBuffer='';updateDots()}
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pd'+i)
+    d.classList.toggle('on',i<pinBuffer.length)
+    d.classList.remove('err')
+  }
+}
+
+async function attemptLogin(){
+  if(!selUser||pinBuffer.length!==4) return
+  try{
+    const data=await api('/api/auth/login',{method:'POST',body:JSON.stringify({userId:selUser.id,pin:pinBuffer})})
+    state.user=data.user
+    await loadAll()
+    showApp()
+    toast('Welcome back, '+data.user.name.split(' ')[0]+'!')
+  }catch(e){
+    for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('err')
+    document.getElementById('pinErr').textContent='Incorrect PIN - try again'
+    pinBuffer=''
+    setTimeout(()=>{
+      updateDots()
+      document.getElementById('pinErr').textContent=''
+    },1500)
+  }
+}
+
+async function signOut(){
+  await fetch('/api/auth/logout',{method:'POST'})
+  state.user=null
+  document.getElementById('app').style.display='none'
+  document.getElementById('profilePanel').classList.remove('open')
+  closeDetail()
+  const users=await fetch('/api/users').then(r=>r.json())
+  renderLoginUsers(users)
+  showStep1()
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('loginScreen').classList.contains('on')){
+    if(document.getElementById('lStep2').style.display!=='none'){
+      if(e.key>='0'&&e.key<='9') pinKey(e.key)
+      else if(e.key==='Backspace') pinBack()
+      else if(e.key==='Escape'){showStep1();pinBuffer='';updateDots()}
+    }
+    return
+  }
+  const tag=(e.target||{}).tagName
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return
+  if(e.key==='n'||e.key==='N') openTaskModal(null)
+  if(e.key==='/'){e.preventDefault();document.getElementById('gSearch').focus()}
+  if(e.key==='Escape'){
+    closeDetail()
+    closeModal('taskModal'); closeModal('projModal'); closeModal('adminModal')
+    document.getElementById('profilePanel').classList.remove('open')
+  }
+  if((e.key==='Delete'||e.key==='Backspace')&&state.selectedTaskId) deleteCurrentTask()
+})
+
+// ==============================================================
+// VIEWS
+// ==============================================================
+function switchView(name,btn){
+  state.currentView=name
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+  ;['kanban','timeline','list','overview'].forEach(v=>{
+    const el=document.getElementById('view-'+v)
+    el.style.display=v===name?(v==='list'?'flex':'block'):v==='list'?'none':'none'
+  })
+  renderView()
+}
+
+function renderView(){
+  renderStats()
+  if(state.currentView==='kanban') renderKanban()
+  else if(state.currentView==='timeline') renderTimeline()
+  else if(state.currentView==='list') renderList()
+  else if(state.currentView==='overview') renderOverview()
+}
+
+function renderStats(){
+  const ts=filteredTasks()
+  const done=ts.filter(t=>isDone(t.status)).length
+  const inprog=ts.filter(t=>!isDone(t.status)&&t.status!=='Backlog').length
+  const overdue=ts.filter(t=>t.due_date&&!isDone(t.status)&&new Date(t.due_date)<new Date()).length
+  const avg=ts.length?Math.round(ts.reduce((a,t)=>a+t.progress,0)/ts.length):0
+  document.getElementById('st-total').textContent=ts.length
+  document.getElementById('st-done').textContent=ts.length?Math.round(done/ts.length*100)+'%':'0%'
+  document.getElementById('st-inprog').textContent=inprog
+  document.getElementById('st-overdue').textContent=overdue
+  document.getElementById('st-overdue').style.color=overdue>0?'var(--rd)':'var(--t1)'
+  document.getElementById('st-avg').textContent=avg+'%'
+}
+
+function renderSidebar(){
+  const p=state.projects; const tasks=state.tasks
+  document.getElementById('count-all').textContent=tasks.length
+  document.getElementById('projBtns').innerHTML=p.map(proj=>{
+    const cnt=tasks.filter(t=>t.project_id===proj.id).length
+    const h=health(proj.id)
+    return`<button class="proj-btn${state.activeProject===proj.id?' on':''}" id="proj-${proj.id}" onclick="setProject('${proj.id}',this)">
+      <div style="width:8px;height:8px;border-radius:50%;background:${proj.color};flex-shrink:0"></div>
+      <span style="flex:1;font-size:11px;word-break:break-word;text-align:left;line-height:1.3">${esc(proj.name)}</span>
+      <div style="width:6px;height:6px;border-radius:50%;background:${HEALTH_COLORS[h]};flex-shrink:0"></div>
+      <span class="kan-col-count">${cnt}</span>
+    </button>`
+  }).join('')
+}
+
+function setProject(id,btn){
+  state.activeProject=id
+  document.querySelectorAll('.proj-btn').forEach(b=>b.classList.remove('on'))
+  btn.classList.add('on')
+  const fb=document.getElementById('filterBar')
+  if(id==='all'){fb.style.display='none'}
+  else{
+    const p=state.projects.find(x=>x.id===id)
+    fb.style.display='flex'
+    document.getElementById('filterDot').style.background=p?.color||'#fff'
+    document.getElementById('filterName').textContent=p?.name||''
+  }
+  renderView()
+}
+
+// == KANBAN ====================================================
+var kanbanLayout  = 'horizontal'  // 'horizontal' or 'vertical'
+var statusOrder   = null          // custom column order (array of status ids)
+var colDragId     = null          // column being dragged
+
+function toggleKanbanLayout(){
+  kanbanLayout = kanbanLayout === 'horizontal' ? 'vertical' : 'horizontal'
+  var btn = document.getElementById('kanbanLayoutBtn')
+  if(btn) btn.textContent = kanbanLayout === 'horizontal' ? 'Horizontal' : 'Vertical'
+  var wrap = document.getElementById('view-kanban')
+  if(kanbanLayout === 'vertical'){
+    wrap.style.flexDirection = 'column'
+    wrap.style.overflowX = 'hidden'
+    wrap.style.overflowY = 'auto'
+  } else {
+    wrap.style.flexDirection = 'row'
+    wrap.style.overflowX = 'auto'
+    wrap.style.overflowY = 'hidden'
+  }
+  renderKanban()
+}
+
+function renderKanban(){
+  var wrap = document.getElementById('view-kanban')
+  var ts   = filteredTasks()
+
+  // Apply layout
+  if(kanbanLayout === 'vertical'){
+    wrap.style.flexDirection = 'column'
+    wrap.style.overflowX = 'hidden'
+    wrap.style.overflowY = 'auto'
+  } else {
+    wrap.style.flexDirection = 'row'
+    wrap.style.overflowX = 'auto'
+    wrap.style.overflowY = 'hidden'
+  }
+
+  // Show/hide layout toggle button
+  var btn = document.getElementById('kanbanLayoutBtn')
+  if(btn){
+    btn.style.display = 'inline-flex'
+    btn.textContent = kanbanLayout === 'horizontal' ? 'Horizontal' : 'Vertical'
+  }
+
+  // Build ordered statuses
+  var statuses = state.statuses.slice()
+  if(statusOrder){
+    statuses.sort(function(a,b){
+      var ai = statusOrder.indexOf(a.id)
+      var bi = statusOrder.indexOf(b.id)
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+    })
+  }
+
+  var html = ''
+  statuses.forEach(function(st){
+    var cards = ts.filter(function(t){ return t.status === st.name })
+    var colW  = kanbanLayout === 'vertical' ? '100%' : '260px'
+    html += '<div class="kan-col" id="col-' + st.id + '" data-sid="' + st.id + '" style="width:' + colW + ';flex-shrink:' + (kanbanLayout==='vertical'?'1':'0') + '"'
+    // Card drop (task reordering)
+    html += ' ondragover="kanColDragOver(event,this,\'' + st.name + '\')"'
+    html += ' ondragleave="kanColDragLeave(event,this)"'
+    html += ' ondrop="kanColDrop(event,\'' + st.name + '\',this)">'
+    // Column header — draggable for reorder
+    html += '<div class="kan-col-hd" draggable="true"'
+    html += ' ondragstart="colDragStart(event,\'' + st.id + '\')"'
+    html += ' ondragend="colDragEnd(event)"'
+    html += ' title="Drag to reorder columns" style="cursor:grab">'
+    html += '<div style="width:10px;height:10px;border-radius:50%;background:' + st.color + '"></div>'
+    html += '<span class="kan-col-name">' + esc(st.name) + '</span>'
+    html += '<span class="kan-col-count">' + cards.length + '</span>'
+    html += '<span style="font-size:9px;color:var(--s3);margin-left:2px">::</span>'
+    html += '</div>'
+    // Cards
+    html += '<div class="kan-cards">'
+    cards.forEach(function(t){ html += kanCard(t) })
+    html += '</div>'
+    // Quick add
+    html += '<div class="quick-add">'
+    html += '<input id="qa-' + st.id + '" placeholder="Quick add..." style="font-size:10px;padding:5px 8px">'
+    html += '<button onclick="quickAdd(\'' + st.name + '\',\'' + st.id + '\')">+</button>'
+    html += '</div>'
+    html += '</div>'
+  })
+  wrap.innerHTML = html
+
+  // Wire quick-add Enter keys
+  statuses.forEach(function(st){
+    var inp = document.getElementById('qa-' + st.id)
+    if(inp) inp.onkeydown = function(e){ if(e.key==='Enter') quickAdd(st.name, st.id) }
+  })
+}
+
+// Column drag-to-reorder
+function colDragStart(e, statusId){
+  colDragId = statusId
+  e.dataTransfer.effectAllowed = 'move'
+  e.dataTransfer.setData('text/plain', 'col:' + statusId)
+  e.stopPropagation()
+}
+function colDragEnd(e){
+  colDragId = null
+  document.querySelectorAll('.kan-col').forEach(function(c){ c.style.opacity = '1' })
+}
+
+// Card drag vs column drag handling
+function kanColDragOver(e, el, statusName){
+  e.preventDefault()
+  var data = e.dataTransfer.getData('text/plain') || ''
+  if(data.startsWith('col:') || colDragId){
+    // Column reorder — show insertion point
+    e.dataTransfer.dropEffect = 'move'
+    document.querySelectorAll('.kan-col').forEach(function(c){ c.style.outline = 'none' })
+    el.style.outline = '2px dashed var(--ac)'
+  } else {
+    el.classList.add('drag-over')
+  }
+}
+function kanColDragLeave(e, el){
+  el.classList.remove('drag-over')
+  el.style.outline = 'none'
+}
+function kanColDrop(e, statusName, el){
+  e.preventDefault()
+  el.classList.remove('drag-over')
+  el.style.outline = 'none'
+  var data = e.dataTransfer.getData('text/plain') || ''
+  if(colDragId || data.startsWith('col:')){
+    // Reorder columns
+    var draggedId  = colDragId || data.replace('col:','')
+    var targetId   = el.dataset.sid
+    if(draggedId === targetId) return
+    var ids = state.statuses.map(function(s){ return s.id })
+    if(statusOrder) ids = statusOrder.slice()
+    var fromIdx = ids.indexOf(draggedId)
+    var toIdx   = ids.indexOf(targetId)
+    if(fromIdx === -1) fromIdx = ids.length
+    ids.splice(fromIdx, 1)
+    ids.splice(toIdx, 0, draggedId)
+    statusOrder = ids
+    colDragId = null
+    renderKanban()
+  } else {
+    dropOnCol(statusName, el)
+  }
+}
+
+function kanCard(t){
+  var proj    = state.projects.find(function(p){ return p.id===t.project_id })
+  var assignee= state.users.find(function(u){ return u.id===t.assignee_id })
+  var blocked = t.blocked_by&&t.blocked_by.length&&!t.blocked_by.every(function(bid){ return isDone((state.tasks.find(function(x){return x.id===bid})||{}).status) })
+  var overdue = t.due_date&&!isDone(t.status)&&new Date(t.due_date)<new Date()
+  var html = '<div class="kan-card' + (state.dragId===t.id?' dragging':'') + '"'
+  html += ' draggable="true" onclick="openDetail(\'' + t.id + '\')"'
+  html += ' ondragstart="state.dragId=\'' + t.id + '\'" ondragend="state.dragId=null">'
+  if(proj){
+    html += '<div class="card-proj">'
+    html += '<div style="width:7px;height:7px;border-radius:50%;background:' + proj.color + '"></div>'
+    html += '<span style="color:' + proj.color + '">' + esc(proj.name) + '</span>'
+    html += '</div>'
+  }
+  html += '<div class="card-title">' + esc(t.title) + '</div>'
+  if(t.block_reason){
+    var _brc = {Agency:'#ff7730',Rayneau:'#b000ff',Custom:'#ff4757'}[t.block_reason]||'#ff4757'
+    html += '<span class="badge" style="background:' + _brc + '22;color:' + _brc + ';margin-bottom:6px">Blocked: ' + esc(t.block_reason) + '</span>'
+  } else if(blocked){
+    html += '<span class="badge" style="background:rgba(255,71,87,.1);color:var(--rd);margin-bottom:6px">Blocked</span>'
+  }
+  var subs = t.subtasks||[]; var subsDone = subs.filter(function(s){return s.completed}).length
+  if(subs.length){
+    html += '<div style="font-size:9px;color:var(--t3);margin-bottom:4px">' + subsDone + '/' + subs.length + ' sub-tasks</div>'
+  }
+  if(t.progress>0){
+    html += '<div class="pbar" style="margin-bottom:7px">'
+    html += '<div class="pbar-fill" style="width:' + t.progress + '%;background:' + (t.progress===100?'var(--gn)':'var(--ac)') + '"></div>'
+    html += '</div>'
+  }
+  if(t.recur_type){
+    html += '<div style="font-size:8px;color:var(--ac);margin-bottom:4px">↺ ' + (t.recur_type.charAt(0).toUpperCase()+t.recur_type.slice(1)) + '</div>'
+  }
+  html += '<div class="card-footer">'
+  if(t.priority) html += '<span class="badge" style="background:' + pc(t.priority) + '22;color:' + pc(t.priority) + '">' + esc(t.priority) + '</span>'
+  if(t.due_date)  html += '<span style="font-size:9px;color:' + (overdue?'var(--rd)':'var(--t3)') + ';margin-left:auto">' + new Date(t.due_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + '</span>'
+  if(assignee)    html += '<div class="avatar" title="' + esc(assignee.name) + '" style="width:18px;height:18px;font-size:7px;background:' + assignee.color + '">' + esc(assignee.initials) + '</div>'
+  if(t.assigner && t.assigner.id !== (assignee&&assignee.id)){
+    html += '<div class="avatar" title="Assigned by: ' + esc(t.assigner.name) + '" style="width:14px;height:14px;font-size:6px;background:' + t.assigner.color + ';opacity:.7;outline:1px solid var(--bd)">' + esc(t.assigner.initials) + '</div>'
+  }
+  html += '</div></div>'
+  return html
+}
+
+async function dropOnCol(statusName, col){
+  if(col) col.classList.remove('drag-over')
+  if(!state.dragId) return
+  try{
+    await api('/api/tasks/' + state.dragId, {method:'PATCH', body:JSON.stringify({status:statusName})})
+    state.tasks = state.tasks.map(function(t){ return t.id===state.dragId ? Object.assign({},t,{status:statusName}) : t })
+    renderView(); renderSidebar()
+  }catch(e){ toast(e.message,'error') }
+  state.dragId = null
+}
+
+async function quickAdd(statusName, statusId){
+  var inp   = document.getElementById('qa-' + statusId)
+  var title = inp ? inp.value.trim() : ''
+  if(!title) return
+  var projId = state.activeProject !== 'all' ? state.activeProject : null
+  try{
+    var t = await api('/api/tasks', {method:'POST', body:JSON.stringify({title, status:statusName, project_id:projId})})
+    state.tasks.unshift(t)
+    if(inp) inp.value = ''
+    renderView(); renderSidebar(); toast('Task added')
+  }catch(e){ toast(e.message,'error') }
+}
+
+
+// == TIMELINE ==================================================
+function renderTimeline(){
+  const wrap=document.getElementById('view-timeline')
+  const ts=filteredTasks().filter(t=>t.start_date&&t.due_date)
+  if(!ts.length){wrap.innerHTML='<div style="text-align:center;padding:60px;color:var(--t3);font-size:12px">No tasks with start and due dates set.</div>';return}
+
+  const today=new Date(); const DAY=28
+  const dates=ts.flatMap(t=>[new Date(t.start_date),new Date(t.due_date)])
+  const minD=new Date(Math.min(...dates)-7*86400000)
+  const maxD=new Date(Math.max(...dates)+7*86400000)
+  minD.setDate(1); const days=[]
+  for(let d=new Date(minD);d<=maxD;d.setDate(d.getDate()+1)) days.push(new Date(d))
+
+  // Group by month
+  const months=[]; let cur=null
+  days.forEach(d=>{
+    const label=d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'})
+    if(!cur||cur.label!==label){cur={label,count:0};months.push(cur)} cur.count++
+  })
+
+  const totalW=days.length*DAY+220
+  const dayOff=d=>(Math.round((new Date(d)-minD)/86400000))*DAY
+
+  wrap.innerHTML=`<div class="tl-wrap" style="width:${totalW}px">
+    <div class="tl-head-row">
+      <div class="tl-label-col"></div>
+      ${months.map(m=>`<div class="tl-month" style="width:${m.count*DAY}px">${m.label}</div>`).join('')}
+    </div>
+    <div class="tl-days-row">
+      <div class="tl-label-col"></div>
+      ${days.map(d=>`<div class="tl-day${d.toDateString()===today.toDateString()?' today':''}" style="width:${DAY}px">${d.getDate()}</div>`).join('')}
+    </div>
+    ${ts.map(t=>{
+      const proj=state.projects.find(p=>p.id===t.project_id)
+      const left=dayOff(t.start_date)
+      const w=Math.max(DAY,dayOff(t.due_date)-left+DAY)
+      return`<div class="tl-row" onclick="openDetail('${t.id}')">
+        <div class="tl-row-label">
+          ${proj?`<div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${proj.color}"></div>`:''}
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.title)}</span>
+        </div>
+        <div class="tl-row-area" style="width:${days.length*DAY}px;height:36px;position:relative">
+          <div style="position:absolute;top:0;bottom:0;width:1px;background:rgba(79,142,255,.4);left:${dayOff(today)}px"></div>
+          <div class="tl-bar" style="left:${left}px;width:${w}px;background:${proj?.color||'var(--ac)'}88;border:1px solid ${proj?.color||'var(--ac)'}">
+            <span class="tl-bar-label">${esc(t.title)}</span>
+            ${t.progress>0?`<div style="position:absolute;bottom:0;left:0;height:2px;background:rgba(255,255,255,.5);width:${t.progress}%"></div>`:''}
+          </div>
+        </div>
+      </div>`
+    }).join('')}
+  </div>`
+}
+
+// == LIST ======================================================
+let listSearch='', listStatusFilter='', listAssignFilter='', listSelected=new Set()
+
+function renderList(){
+  const wrap=document.getElementById('view-list')
+  wrap.style.display='flex'; wrap.style.flexDirection='column'
+  const ts=filteredTasks().filter(t=>{
+    const q=listSearch.toLowerCase()
+    return(!q||t.title.toLowerCase().includes(q)||(state.projects.find(p=>p.id===t.project_id)||{}).name?.toLowerCase().includes(q))
+      &&(!listStatusFilter||t.status===listStatusFilter)
+      &&(!listAssignFilter||t.assignee_id===listAssignFilter)
+  })
+
+  wrap.innerHTML=`
+    <div class="list-toolbar">
+      <input value="${esc(listSearch)}" placeholder="Search\u2026" oninput="listSearch=this.value;renderList()" style="width:180px;font-size:10px;padding:5px 8px">
+      <select onchange="listStatusFilter=this.value;renderList()" style="width:120px;font-size:10px;padding:5px 6px">
+        <option value="">All Statuses</option>
+        ${state.statuses.map(s=>`<option value="${esc(s.name)}"${listStatusFilter===s.name?' selected':''}>${esc(s.name)}</option>`).join('')}
+      </select>
+      <select onchange="listAssignFilter=this.value;renderList()" style="width:120px;font-size:10px;padding:5px 6px">
+        <option value="">All Assignees</option>
+        ${state.users.map(u=>`<option value="${u.id}"${listAssignFilter===u.id?' selected':''}>${esc(u.name)}</option>`).join('')}
+      </select>
+      ${listSelected.size>0?`
+      <div class="bulk-bar">
+        <span>${listSelected.size} selected</span>
+        <select onchange="if(this.value){bulkSet('status',this.value);this.value=''}" style="background:transparent;border:none;color:var(--t2);font-size:10px;cursor:pointer">
+          <option value="">Set status?</option>${state.statuses.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('')}
+        </select>
+        <select onchange="if(this.value){bulkSet('assignee_id',this.value);this.value=''}" style="background:transparent;border:none;color:var(--t2);font-size:10px;cursor:pointer">
+          <option value="">Assign to?</option>${state.users.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}
+        </select>
+        <button onclick="bulkDelete()" style="background:none;border:none;color:var(--rd);font-size:10px;cursor:pointer">\u1F5D1 Delete</button>
+      </div>`:''}
+    </div>
+    <div class="list-table-wrap">
+    <table>
+      <thead><tr>
+        <th style="width:32px"><input type="checkbox" ${ts.length>0&&ts.every(t=>listSelected.has(t.id))?'checked':''} onchange="toggleAllList(this,${JSON.stringify(ts.map(t=>t.id))})"></th>
+        <th style="min-width:180px">Task</th><th style="min-width:160px">Project</th><th>Assignee</th><th>Status</th><th>Priority</th><th>Progress</th><th>Due</th>
+      </tr></thead>
+      <tbody>${ts.map(t=>{
+        const proj=state.projects.find(p=>p.id===t.project_id)
+        const assignee=state.users.find(u=>u.id===t.assignee_id)
+        const overdue=t.due_date&&!isDone(t.status)&&new Date(t.due_date)<new Date()
+        const sc=statusColor(t.status)
+        return`<tr onclick="openDetail('${t.id}')">
+          <td onclick="event.stopPropagation()"><input type="checkbox" ${listSelected.has(t.id)?'checked':''} onchange="toggleListItem('${t.id}',this.checked)" onclick="event.stopPropagation()"></td>
+          <td style="color:var(--t1);font-weight:500">${esc(t.title)}</td>
+          <td>${proj?`<div style="display:flex;align-items:center;gap:5px"><div style="width:6px;height:6px;border-radius:50%;background:${proj.color}"></div><span style="color:var(--t2)">${esc(proj.name)}</span></div>`:''}</td>
+          <td>${assignee?`<div style="display:flex;align-items:center;gap:5px"><div class="avatar" style="width:18px;height:18px;font-size:7px;background:${assignee.color}">${esc(assignee.initials)}</div>${esc(assignee.name.split(' ')[0])}</div>`:''}</td>
+          <td><span class="badge" style="background:${sc}22;color:${sc}">${esc(t.status)}</span></td>
+          <td>${t.priority?`<span class="badge" style="background:${pc(t.priority)}22;color:${pc(t.priority)}">${esc(t.priority)}</span>`:''}</td>
+          <td><div style="display:flex;align-items:center;gap:5px"><div class="pbar" style="width:50px"><div class="pbar-fill" style="width:${t.progress}%;background:${t.progress===100?'var(--gn)':'var(--ac)'}"></div></div><span style="color:var(--t3);font-size:9px">${t.progress}%</span></div></td>
+          <td style="color:${overdue?'var(--rd)':'var(--t3)'};font-size:10px">${t.due_date?new Date(t.due_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'-'}${overdue?' !':''}</td>
+        </tr>`
+      }).join('')}
+      ${!ts.length?`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--t3)">No tasks found</td></tr>`:''}
+      </tbody>
+    </table></div>`
+}
+
+function toggleListItem(id,checked){
+  checked?listSelected.add(id):listSelected.delete(id); renderList()
+}
+function toggleAllList(cb,ids){
+  if(cb.checked) ids.forEach(id=>listSelected.add(id)); else listSelected.clear(); renderList()
+}
+async function bulkSet(field,val){
+  await Promise.all([...listSelected].map(id=>api(`/api/tasks/${id}`,{method:'PATCH',body:JSON.stringify({[field]:val})})))
+  state.tasks=state.tasks.map(t=>listSelected.has(t.id)?{...t,[field]:val}:t)
+  toast(`Updated ${listSelected.size} tasks`); listSelected.clear(); renderView(); renderSidebar()
+}
+async function bulkDelete(){
+  if(!confirm(`Delete ${listSelected.size} tasks?`)) return
+  await Promise.all([...listSelected].map(id=>api(`/api/tasks/${id}`,{method:'DELETE'})))
+  state.tasks=state.tasks.filter(t=>!listSelected.has(t.id))
+  toast('Deleted'); listSelected.clear(); renderView(); renderSidebar()
+}
+
+// == OVERVIEW ==================================================
+let ovSearch='', ovHideDone=false, ovCollapsed=new Set()
+
+function renderOverview(){
+  const wrap=document.getElementById('view-overview')
+  const q=ovSearch.toLowerCase()
+  wrap.innerHTML=`
+    <div class="ov-toolbar">
+      <input value="${esc(ovSearch)}" placeholder="Filter projects or tasks\u2026" oninput="ovSearch=this.value;renderOverview()" style="width:200px;font-size:10px;padding:5px 8px">
+      <label style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);cursor:pointer">
+        <input type="checkbox" ${ovHideDone?'checked':''} onchange="ovHideDone=this.checked;renderOverview()" style="accent-color:var(--ac)"> Hide completed
+      </label>
+      <div style="margin-left:auto;display:flex;gap:6px">
+        <button class="btn btn-g" style="font-size:10px;padding:5px 10px" onclick="ovCollapsed.clear();renderOverview()">Expand all</button>
+        <button class="btn btn-g" style="font-size:10px;padding:5px 10px" onclick="state.projects.forEach(p=>ovCollapsed.add(p.id));renderOverview()">Collapse all</button>
+        <button class="btn btn-g" style="font-size:10px;padding:5px 10px" onclick="window.print()">\u1F5A8 Print</button>
+      </div>
+    </div>
+    ${state.projects.map(proj=>{
+      let ts=state.tasks.filter(t=>t.project_id===proj.id)
+      if(ovHideDone) ts=ts.filter(t=>!isDone(t.status))
+      const allTs=state.tasks.filter(t=>t.project_id===proj.id)
+      const done=allTs.filter(t=>isDone(t.status)).length
+      const pct=allTs.length?Math.round(done/allTs.length*100):0
+      const h=health(proj.id)
+      const isOpen=!ovCollapsed.has(proj.id)
+      const progColor=pct===100?'var(--gn)':pct>=50?'var(--ac)':'var(--yw)'
+      const displayTs=q&&!proj.name.toLowerCase().includes(q)?ts.filter(t=>t.title.toLowerCase().includes(q)):ts
+      if(q&&!proj.name.toLowerCase().includes(q)&&!displayTs.length) return''
+      return`<div class="ov-proj">
+        <div class="ov-proj-hd" onclick="ovCollapsed.has('${proj.id}')?ovCollapsed.delete('${proj.id}'):ovCollapsed.add('${proj.id}');renderOverview()">
+          <div style="width:10px;height:10px;border-radius:50%;background:${proj.color}"></div>
+          <span class="ov-proj-name">${esc(proj.name)}</span>
+          ${proj.description?`<span style="color:var(--t3);font-size:9px">${esc(proj.description)}</span>`:''}
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+            <span style="color:var(--t3);font-size:9px">${allTs.length} tasks</span>
+            <span style="color:var(--gn);font-size:9px">${done} done</span>
+            <div style="display:flex;align-items:center;gap:5px">
+              <div style="width:60px;height:4px;background:var(--s3);border-radius:2px;overflow:hidden">
+                <div style="width:${pct}%;height:100%;background:${progColor};border-radius:2px"></div>
+              </div>
+              <span style="font-size:9px;font-weight:700;color:${progColor}">${pct}%</span>
+            </div>
+            <div style="width:7px;height:7px;border-radius:50%;background:${HEALTH_COLORS[h]}"></div>
+            <span style="color:var(--t3);font-size:10px;transition:transform .2s;${isOpen?'transform:rotate(90deg)':''}">\u25B6</span>
+          </div>
+        </div>
+        ${isOpen?`<div>
+          <div class="ov-task-hd"><span>#</span><span>Task</span><span>Assignee</span><span>Status</span><span>Priority</span><span>Progress</span><span>Due</span></div>
+          ${!displayTs.length?`<div style="padding:12px 16px;font-size:10px;color:var(--t3);font-style:italic">No tasks</div>`:
+          displayTs.map((t,i)=>{
+            const asgn=state.users.find(u=>u.id===t.assignee_id)
+            const done=isDone(t.status)
+            const overdue=t.due_date&&!done&&new Date(t.due_date)<new Date()
+            const sc=statusColor(t.status)
+            return`<div class="ov-task-row${done?' ':''}" onclick="openDetail('${t.id}')">
+              <span style="color:var(--t3);font-size:9px">${i+1}</span>
+              <span style="color:var(--t1);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap${done?';text-decoration:line-through':''}">${esc(t.title)}</span>
+              <div style="display:flex;align-items:center;gap:5px;overflow:hidden">${asgn?`<div class="avatar" style="width:16px;height:16px;font-size:7px;flex-shrink:0;background:${asgn.color}">${esc(asgn.initials)}</div><span style="color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${esc(asgn.name)}</span>`:'<span style="color:var(--t3);font-size:10px">-</span>'}</div>
+              <div><span class="badge" style="background:${sc}22;color:${sc}">${esc(t.status)}</span></div>
+              <div>${t.priority?`<span class="badge" style="background:${pc(t.priority)}22;color:${pc(t.priority)}">${esc(t.priority)}</span>`:''}</div>
+              <div style="display:flex;align-items:center;gap:4px"><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${t.progress}%;background:${t.progress===100?'var(--gn)':'var(--ac)'}"></div></div><span style="font-size:9px;color:var(--t3)">${t.progress}%</span></div>
+              <span style="font-size:9px;color:${overdue?'var(--rd)':'var(--t3)'}">${t.due_date?new Date(t.due_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'-'}${overdue?' !':''}</span>
+            </div>`
+          }).join('')}
+        </div>`:''}
+      </div>`
+    }).join('')}`
+}
+
+// ==============================================================
+// TASK DETAIL
+// ==============================================================
+function openDetail(id){
+  state.selectedTaskId=id
+  const t=state.tasks.find(x=>x.id===id); if(!t) return
+  const panel=document.getElementById('detailPanel'); panel.classList.add('open')
+  renderDetailBody(t)
+}
+
+function buildCommentList(comments){
+  if(!comments.length) return '<div id="commentList" style="margin-bottom:10px"><p style="font-size:10px;color:var(--t3)">No comments yet</p></div>'
+  var rows = comments.map(function(c){
+    var color = (c.author && c.author.color) ? c.author.color : 'var(--ac)'
+    var initials = (c.author && c.author.initials) ? esc(c.author.initials) : esc(c.author_name[0])
+    var date = new Date(c.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'})
+    return '<div class="comment">' +
+      '<div class="avatar" style="width:26px;height:26px;font-size:9px;flex-shrink:0;background:' + color + '">' + initials + '</div>' +
+      '<div class="comment-body">' +
+        '<div class="comment-author">' + esc(c.author_name) + '</div>' +
+        '<div class="comment-text">' + esc(c.text) + '</div>' +
+        '<div class="comment-time">' + date + '</div>' +
+      '</div>' +
+    '</div>'
+  })
+  return '<div id="commentList" style="margin-bottom:10px">' + rows.join('') + '</div>'
+}
+function buildCommentInput(taskId, user){
+  var color = (user && user.color) ? user.color : 'var(--ac)'
+  var initials = (user && user.initials) ? esc(user.initials) : '?'
+  return '<div class="comment-input-row">' +
+    '<div class="avatar" style="width:26px;height:26px;font-size:9px;flex-shrink:0;background:' + color + '">' + initials + '</div>' +
+    '<textarea id="commentInput" rows="2" placeholder="Add a comment..." style="flex:1;font-size:10px" id="ci_' + taskId + '"></textarea>' +
+    '<button class="btn btn-p" style="font-size:12px;padding:6px 10px;align-self:flex-end" id="csend_' + taskId + '">^</button>' +
+  '</div>'
+}
+function userChip(u){
+  if(!u) return '<span style="color:var(--t3);font-size:11px">--</span>'
+  return '<div style="display:flex;align-items:center;gap:5px">' +
+    '<div class="avatar" style="width:20px;height:20px;font-size:8px;background:' + u.color + '">' + esc(u.initials) + '</div>' +
+    '<span style="font-size:11px;color:var(--t2)">' + esc(u.name) + '</span>' +
+    '</div>'
+}
+
+function renderDetailBody(t){
+  const proj    = state.projects.find(p => p.id === t.project_id)
+  const asgn    = state.users.find(u => u.id === t.assignee_id)
+  const assigner= t.assigner || null
+  const creator = t.creator  || null
+  const sc      = statusColor(t.status)
+  const overdue = t.due_date && !isDone(t.status) && new Date(t.due_date) < new Date()
+  const stages  = t.drawing_stages || []
+  const allItems= stages.flatMap(s => s.items || [])
+  const ovProg  = allItems.length ? Math.round(allItems.reduce((a,i) => a+i.progress, 0) / allItems.length) : t.progress
+
+  var html = ''
+
+  // ── Header: project + title + progress ──
+  html += '<div class="det-section">'
+  if(proj){
+    html += '<div style="display:flex;align-items:center;gap:5px;margin-bottom:6px">'
+    html += '<div style="width:7px;height:7px;border-radius:50%;background:' + proj.color + '"></div>'
+    html += '<span style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;color:' + proj.color + '">' + esc(proj.name) + '</span>'
+    html += '</div>'
+  }
+  html += '<div style="font-family:Syne,sans-serif;font-weight:700;font-size:16px;color:var(--t1);line-height:1.3;margin-bottom:10px">' + esc(t.title) + '</div>'
+  html += '<div style="margin-bottom:4px"><div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:4px">Progress</div>'
+  html += '<div style="display:flex;align-items:center;gap:8px">'
+  html += '<div class="pbar" style="flex:1;height:6px"><div class="pbar-fill" style="width:' + ovProg + '%;background:' + (ovProg===100?'var(--gn)':'var(--ac)') + '"></div></div>'
+  html += '<span style="font-size:11px;font-weight:700;color:var(--t2)">' + ovProg + '%</span>'
+  html += '</div></div>'
+  html += '</div>'
+
+  // ── Meta grid ──
+  html += '<div class="det-section">'
+  html += '<div class="det-grid">'
+  html += '<div><div class="det-sec-title">Status</div><span class="badge" style="background:' + sc + '22;color:' + sc + '">' + esc(t.status) + '</span></div>'
+  html += '<div><div class="det-sec-title">Priority</div>' + (t.priority ? '<span class="badge" style="background:' + pc(t.priority) + '22;color:' + pc(t.priority) + '">' + esc(t.priority) + '</span>' : '<span style="color:var(--t3);font-size:11px">--</span>') + '</div>'
+  html += '<div><div class="det-sec-title">Assignee</div>'    + userChip(asgn)     + '</div>'
+  html += '<div><div class="det-sec-title">Assigned By</div>' + userChip(assigner) + '</div>'
+  html += '<div><div class="det-sec-title">Created By</div>'  + userChip(creator)  + '</div>'
+  html += '<div><div class="det-sec-title">Due Date</div>'
+  html += '<span style="font-size:11px;color:' + (overdue?'var(--rd)':'var(--t2)') + '">'
+  html += (t.due_date ? new Date(t.due_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '--')
+  html += (overdue ? ' !' : '') + '</span></div>'
+  html += '</div></div>'
+
+  // ── Description ──
+  if(t.description){
+    html += '<div class="det-section">'
+    html += '<div class="det-sec-title">Description</div>'
+    html += '<p style="font-size:11px;color:var(--t2);line-height:1.6;white-space:pre-wrap">' + esc(t.description) + '</p>'
+    html += '</div>'
+  }
+
+  // ── File ref ──
+  if(t.file_ref){
+    html += '<div class="det-section">'
+    html += '<div class="det-sec-title">File Reference</div>'
+    var isUrl = t.file_ref.startsWith('http://') || t.file_ref.startsWith('https://')
+    if(isUrl){
+      html += '<a href="' + esc(t.file_ref) + '" target="_blank" style="font-size:11px;color:var(--ac);font-family:monospace;word-break:break-all;text-decoration:underline">' + esc(t.file_ref) + '</a>'
+    } else {
+      html += '<span style="font-size:11px;color:var(--ac);font-family:monospace;word-break:break-all">' + esc(t.file_ref) + '</span>'
+    }
+    html += '</div>'
+  }
+
+  // ── Block reason ──
+  if(t.block_reason){
+    var brColors = {Agency:'#ff7730', Rayneau:'#b000ff', Custom:'#ff4757'}
+    var brc = brColors[t.block_reason] || 'var(--rd)'
+    html += '<div class="det-section">'
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+    html += '<span style="background:' + brc + '22;color:' + brc + ';border:1px solid ' + brc + '44;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700">BLOCKED - ' + esc(t.block_reason) + '</span>'
+    html += '</div>'
+    if(t.block_description){
+      html += '<p style="font-size:11px;color:var(--t2);line-height:1.6;margin-top:4px">' + esc(t.block_description) + '</p>'
+    }
+    html += '</div>'
+  }
+
+  // ── Drawing Breakdown ──
+  html += '<div class="det-section">'
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+  html += '<div class="det-sec-title" style="margin:0">Drawing Breakdown</div>'
+  html += '<div style="display:flex;align-items:center;gap:8px">'
+  html += '<span style="font-size:11px;color:var(--t2);font-weight:600">' + ovProg + '%</span>'
+  html += '<button onclick="resetDrawings(\'' + t.id + '\')" title="Reset to default template" style="background:none;border:1px solid rgba(255,71,87,.3);border-radius:5px;color:var(--t3);font-size:9px;padding:2px 7px;cursor:pointer">Reset</button>'
+  html += '</div></div>'
+
+  stages.forEach(function(stage){
+    var tmpl   = STAGE_TEMPLATES[stage.stage_key] || {icon:'', label:stage.stage_key}
+    var items  = stage.items || []
+    var avgPct = items.length ? Math.round(items.reduce(function(a,i){return a+i.progress},0)/items.length) : 0
+    var fc     = avgPct===100 ? 'var(--gn)' : avgPct>50 ? 'var(--ac)' : avgPct>0 ? 'var(--yw)' : 'var(--s3)'
+    var open   = stage.collapsed === false
+
+    html += '<div class="dwg-stage">'
+    html += '<div class="dwg-stage-hd" onclick="toggleStage(\'' + stage.id + '\',\'' + t.id + '\')">'
+    html += '<span>' + tmpl.icon + '</span>'
+    html += '<span style="font-size:11px;font-weight:600;color:var(--t2);flex:1">' + tmpl.label + '</span>'
+    html += '<div style="width:50px;height:3px;background:var(--s3);border-radius:2px;overflow:hidden"><div style="width:' + avgPct + '%;height:100%;background:' + fc + '"></div></div>'
+    html += '<span style="font-size:9px;color:var(--t3);width:28px;text-align:right">' + avgPct + '%</span>'
+    html += '<span style="font-size:9px;color:var(--t3)">' + (open?'v':'>') + '</span>'
+    html += '</div>'
+
+    if(open){
+      html += '<div>'
+      items.forEach(function(item){
+        html += '<div class="dwg-item" id="dwgi_' + item.id + '">'
+        html += '<span class="dwg-item-name' + (item.progress===100?' done':'') + '" ondblclick="startRenameItem(\'' + item.id + '\',\'' + t.id + '\',\'' + stage.id + '\')" title="Double-click to rename">' + esc(item.name) + '</span>'
+        html += '<div class="prog-btns">'
+        ;[0,25,50,75,100].forEach(function(p){
+          html += '<button class="prog-btn' + (item.progress===p?' active':'') + '" onclick="setDrawingProgress(\'' + t.id + '\',\'' + stage.id + '\',\'' + item.id + '\',' + p + ')">' + p + '%</button>'
+        })
+        html += '</div>'
+        html += '<button onclick="deleteDrawingItem(\'' + t.id + '\',\'' + stage.id + '\',\'' + item.id + '\')" title="Remove" style="background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;padding:0 3px;flex-shrink:0">x</button>'
+        html += '</div>'
+      })
+      // Add sheet input
+      html += '<div style="display:flex;gap:6px;padding:6px 10px;border-top:1px solid var(--bd)">'
+      html += '<input id="dwadd_' + stage.id + '" placeholder="Add sheet name..." style="flex:1;font-size:10px;padding:4px 7px;background:var(--s3);border:1px solid var(--bd);border-radius:5px;color:var(--t1)">'
+      html += '<button onclick="addDrawingItem(\'' + t.id + '\',\'' + stage.id + '\')" style="background:var(--s3);border:1px solid var(--bd);border-radius:5px;color:var(--t3);font-size:12px;padding:4px 8px;cursor:pointer">+</button>'
+      html += '</div>'
+      html += '</div>'
+    }
+    html += '</div>'
+  })
+  html += '</div>'
+
+  // ── Sub-tasks ──
+  html += buildSubtasks(t)
+
+  // ── Watchers & Time ──
+  html += '<div class="det-section">'
+  html += buildWatchers(t)
+  html += buildRecurring(t)
+  html += '</div>'
+
+  // ── Time Tracking ──
+  html += buildTimeTracking(t)
+
+  // ── Comments ──
+  html += '<div class="det-section">'
+  html += '<div class="det-sec-title">Comments (' + (t.comments||[]).length + ')</div>'
+  html += buildCommentList(t.comments||[])
+  html += buildCommentInput(t.id, state.user)
+  html += '</div>'
+
+  document.getElementById('detBody').innerHTML = html
+
+  // Wire comment send button after render
+  var csend = document.getElementById('csend_' + t.id)
+  var cinput = document.getElementById('commentInput')
+  if(csend)  csend.onclick = function(){ postComment(t.id) }
+  if(cinput){
+    cinput.onkeydown = function(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();postComment(t.id)} }
+    setupMentions('commentInput', t.id)
+  }
+  // Wire subtask input Enter
+  var subInp = document.getElementById('sub_inp_' + t.id)
+  if(subInp) subInp.onkeydown = function(e){ if(e.key==='Enter') addSubtask(t.id) }
+  // Wire time log Enter
+  var timeHrs = document.getElementById('time_hrs_' + t.id)
+  if(timeHrs) timeHrs.onkeydown = function(e){ if(e.key==='Enter') logTime(t.id) }
+
+  // Wire drawing add inputs (Enter key)
+  stages.forEach(function(stage){
+    var inp = document.getElementById('dwadd_' + stage.id)
+    if(inp) inp.onkeydown = function(e){ if(e.key==='Enter') addDrawingItem(t.id, stage.id) }
+  })
+}
+
+async function toggleStage(stageId,taskId){
+  const t=state.tasks.find(x=>x.id===taskId); if(!t) return
+  const s=t.drawing_stages?.find(x=>x.id===stageId); if(!s) return
+  s.collapsed=!s.collapsed; renderDetailBody(t)
+}
+
+async function addDrawingItem(taskId, stageId){
+  const inp = document.getElementById('dwadd_' + stageId)
+  const name = inp ? inp.value.trim() : ''
+  if(!name){ toast('Enter a sheet name','error'); return }
+  try{
+    const data = await api('/api/tasks/' + taskId + '/drawings/items', {
+      method: 'POST',
+      body: JSON.stringify({ stageId, name })
+    })
+    const t = state.tasks.find(x=>x.id===taskId)
+    if(t) t.drawing_stages = data.stages
+    renderDetailBody(t); toast('Sheet added')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function deleteDrawingItem(taskId, stageId, itemId){
+  if(!confirm('Remove this drawing sheet?')) return
+  try{
+    const data = await api('/api/tasks/' + taskId + '/drawings/items/' + itemId, { method: 'DELETE' })
+    const t = state.tasks.find(x=>x.id===taskId)
+    if(t){ t.drawing_stages = data.stages; t.progress = data.overallProgress }
+    renderDetailBody(t); renderView(); toast('Sheet removed')
+  } catch(e){ toast(e.message,'error') }
+}
+
+function startRenameItem(itemId, taskId, stageId){
+  const container = document.getElementById('dwgi_' + itemId)
+  if(!container) return
+  const nameEl = container.querySelector('.dwg-item-name')
+  if(!nameEl) return
+  const current = nameEl.textContent
+  const inp = document.createElement('input')
+  inp.value = current
+  inp.style.cssText = 'flex:1;font-size:10px;padding:3px 6px;background:var(--s3);border:1px solid var(--ac);border-radius:5px;color:var(--t1);outline:none'
+  nameEl.replaceWith(inp)
+  inp.focus(); inp.select()
+  const save = async () => {
+    const newName = inp.value.trim()
+    if(!newName || newName === current){ renderDetailBody(state.tasks.find(x=>x.id===taskId)); return }
+    try{
+      const data = await api('/api/tasks/' + taskId + '/drawings/items/' + itemId, {
+        method: 'PATCH',
+        body: JSON.stringify({ name: newName })
+      })
+      const t = state.tasks.find(x=>x.id===taskId)
+      if(t) t.drawing_stages = data.stages
+      renderDetailBody(t); toast('Sheet renamed')
+    } catch(e){ toast(e.message,'error') }
+  }
+  inp.addEventListener('blur', save)
+  inp.addEventListener('keydown', e => {
+    if(e.key==='Enter') inp.blur()
+    if(e.key==='Escape'){ renderDetailBody(state.tasks.find(x=>x.id===taskId)) }
+  })
+}
+
+async function resetDrawings(taskId){
+  if(!confirm('Reset drawing breakdown to the default template? All custom sheets and progress will be lost.')) return
+  try{
+    const data = await api('/api/tasks/' + taskId + '/drawings/reset', { method: 'POST' })
+    const t = state.tasks.find(x=>x.id===taskId)
+    if(t){ t.drawing_stages = data.stages; t.progress = 0 }
+    renderDetailBody(t); renderView(); toast('Drawing breakdown reset')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function setDrawingProgress(taskId,stageId,itemId,progress){
+  try{
+    const data=await api(`/api/tasks/${taskId}/drawings`,{method:'PATCH',body:JSON.stringify({stageId,itemId,progress})})
+    // Update local state
+    const t=state.tasks.find(x=>x.id===taskId)
+    if(t){
+      t.progress=data.overallProgress
+      if(t.drawing_stages){
+        data.stages.forEach(s=>{
+          const ls=t.drawing_stages.find(x=>x.id===s.id)
+          if(ls){ls.items=s.items;ls.collapsed=ls.collapsed}
+        })
+      }
+    }
+    renderDetailBody(state.tasks.find(x=>x.id===taskId))
+    renderView()
+  }catch(e){toast(e.message,'error')}
+}
+
+async function postComment(taskId){
+  const inp=document.getElementById('commentInput')
+  const text=inp.value.trim(); if(!text) return
+  try{
+    const c=await api(`/api/tasks/${taskId}/comments`,{method:'POST',body:JSON.stringify({text,author_name:state.user?.name||'Unknown'})})
+    const t=state.tasks.find(x=>x.id===taskId)
+    if(t){if(!t.comments)t.comments=[];t.comments.push(c)}
+    inp.value=''; renderDetailBody(t); toast('Comment added')
+  }catch(e){toast(e.message,'error')}
+}
+
+function closeDetail(){
+  document.getElementById('detailPanel').classList.remove('open')
+  state.selectedTaskId=null
+}
+function editCurrentTask(){ if(state.selectedTaskId) openTaskModal(state.selectedTaskId) }
+async function deleteCurrentTask(){
+  if(!state.selectedTaskId) return
+  const t=state.tasks.find(x=>x.id===state.selectedTaskId)
+  if(!confirm(`Delete "${t?.title}"? Cannot be undone.`)) return
+  try{
+    await api(`/api/tasks/${state.selectedTaskId}`,{method:'DELETE'})
+    state.tasks=state.tasks.filter(x=>x.id!==state.selectedTaskId)
+    closeDetail(); renderView(); renderSidebar(); toast('Task deleted')
+  }catch(e){toast(e.message,'error')}
+}
+async function duplicateCurrentTask(){
+  if(!state.selectedTaskId) return
+  const t=state.tasks.find(x=>x.id===state.selectedTaskId); if(!t) return
+  try{
+    const copy=await api('/api/tasks',{method:'POST',body:JSON.stringify({
+      title:t.title+' (copy)',project_id:t.project_id,assignee_id:t.assignee_id,
+      status:t.status,priority:t.priority,description:t.description,
+      file_ref:t.file_ref,blocked_by:[]
+    })})
+    state.tasks.unshift(copy); renderView(); renderSidebar(); toast('Task duplicated')
+  }catch(e){toast(e.message,'error')}
+}
+
+// ==============================================================
+// TASK MODAL
+// ==============================================================
+function openTaskModal(editId){
+  state.editingTaskId=editId||null
+  const t=editId?state.tasks.find(x=>x.id===editId):null
+  document.getElementById('taskModalTitle').textContent=t?'Edit Task':'New Task'
+  document.getElementById('taskSaveBtn').textContent=t?'Save Changes':'Create Task'
+
+  // Populate selects
+  const projSel=document.getElementById('t_proj')
+  projSel.innerHTML='<option value="">- No project -</option>'+state.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+  const asgSel=document.getElementById('t_assign')
+  asgSel.innerHTML='<option value="">- Unassigned -</option>'+state.users.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')
+  const stSel=document.getElementById('t_status')
+  stSel.innerHTML=state.statuses.map(s=>`<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('')
+  const priSel=document.getElementById('t_pri')
+  priSel.innerHTML='<option value="">- None -</option>'+state.priorities.map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('')
+
+  // (blocked_by replaced by block_reason radio buttons)
+
+  if(t){
+    document.getElementById('t_title').value=t.title||''
+    document.getElementById('t_desc').value=t.description||''
+    projSel.value=t.project_id||''
+    asgSel.value=t.assignee_id||''
+    stSel.value=t.status||'Backlog'
+    priSel.value=t.priority||''
+    const prog=document.getElementById('t_prog'); prog.value=t.progress||0
+    document.getElementById('t_prog_val').textContent=t.progress||0
+    document.getElementById('t_start').value=t.start_date?.slice(0,10)||''
+    document.getElementById('t_due').value=t.due_date?.slice(0,10)||''
+    document.getElementById('t_cad').value=t.file_ref||''
+    updateFileRefPreview()
+    // Set recurring
+    var rtype = document.getElementById('t_recur_type')
+    var rinterval = document.getElementById('t_recur_interval')
+    if(rtype){ rtype.value = t.recur_type||''; toggleRecurInterval() }
+    if(rinterval) rinterval.value = t.recur_interval||1
+    // Set block reason radio
+    var br = t.block_reason || ''
+    document.querySelectorAll('input[name="block_reason"]').forEach(function(r){ r.checked = r.value === br })
+    var bdesc = document.getElementById('t_block_desc')
+    if(bdesc){ bdesc.value = t.block_description||''; bdesc.style.display = br ? 'block' : 'none' }
+  } else {
+    document.getElementById('t_title').value=''
+    document.getElementById('t_desc').value=''
+    const ap=state.activeProject!=='all'?state.activeProject:''
+    projSel.value=ap
+    asgSel.value=state.user?.sub||state.user?.id||''
+    stSel.value=state.statuses[0]?.name||'Backlog'
+    priSel.value=state.priorities[1]?.name||'Medium'
+    const prog=document.getElementById('t_prog'); prog.value=0
+    document.getElementById('t_prog_val').textContent=0
+    document.getElementById('t_start').value=''
+    document.getElementById('t_due').value=''
+    document.getElementById('t_cad').value=''
+    document.getElementById('t_cad_preview') && (document.getElementById('t_cad_preview').style.display='none')
+    document.querySelectorAll('input[name="block_reason"]').forEach(function(r){ r.checked = r.value==='' })
+    var bdesc = document.getElementById('t_block_desc')
+    if(bdesc){ bdesc.value=''; bdesc.style.display='none' }
+    var rtype = document.getElementById('t_recur_type')
+    if(rtype){ rtype.value=''; toggleRecurInterval() }
+  }
+  openModal('taskModal')
+}
+
+function openAssignmentMailto(task, assignee, assigner, proj){
+  if(!assignee || !assignee.email) return
+  var projName = proj ? proj.name : ''
+  var dueStr   = task.due_date ? new Date(task.due_date).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : ''
+  var appUrl   = window.location.origin
+
+  var subject = '[Linework] Task Assigned: ' + task.title
+
+  var body = 'Dear ' + assignee.name + ',\n\n'
+  body += 'You have been assigned the following task by ' + (assigner || 'a team member') + ':\n\n'
+  body += '--------------------------------------\n'
+  body += 'TASK:     ' + task.title + '\n'
+  if(projName) body += 'PROJECT:  ' + projName + '\n'
+  if(task.priority) body += 'PRIORITY: ' + task.priority + '\n'
+  if(dueStr)   body += 'DUE DATE: ' + dueStr + '\n'
+  if(task.status) body += 'STATUS:   ' + task.status + '\n'
+  if(task.file_ref) body += 'FILE REF: ' + task.file_ref + '\n'
+  body += '--------------------------------------\n'
+  if(task.description) body += '\nNOTES:\n' + task.description + '\n'
+  body += '\nView this task in Linework:\n' + appUrl + '\n\n'
+  body += 'Regards,\n' + (assigner || 'CIE Projects Team') + '\nCIE Ltd. Projects Department\n\n'
+  body += '-- Sent via Linework Task Management'
+
+  var mailto = 'mailto:' + encodeURIComponent(assignee.email)
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(body)
+
+  window.open(mailto, '_blank')
+}
+
+function toggleRecurInterval(){
+  var sel  = document.getElementById('t_recur_type')
+  var wrap = document.getElementById('t_recur_interval_wrap')
+  var unit = document.getElementById('t_recur_unit')
+  if(!sel || !wrap) return
+  wrap.style.display = sel.value ? 'flex' : 'none'
+  if(unit) unit.textContent = sel.value==='daily' ? 'day(s)' : sel.value==='monthly' ? 'month(s)' : 'week(s)'
+}
+function toggleBlockDesc(){
+  var checked = document.querySelector('input[name="block_reason"]:checked')
+  var desc    = document.getElementById('t_block_desc')
+  if(!checked || !desc) return
+  desc.style.display = checked.value ? 'block' : 'none'
+  if(!checked.value) desc.value = ''
+}
+function updateFileRefPreview(){
+  var val = document.getElementById('t_cad').value.trim()
+  var prev = document.getElementById('t_cad_preview')
+  if(!prev) return
+  if(val.startsWith('http://') || val.startsWith('https://')){
+    prev.style.display = 'block'
+    prev.innerHTML = '<a href="' + val + '" target="_blank" style="color:var(--ac);text-decoration:underline">Open link: ' + val + '</a>'
+  } else if(val) {
+    prev.style.display = 'block'
+    prev.innerHTML = '<span style="color:var(--t3)">Path/filename: ' + val + '</span>'
+  } else {
+    prev.style.display = 'none'
+  }
+}
+
+async function saveTask(){
+  const title=document.getElementById('t_title').value.trim()
+  if(!title){toast('Title is required','error');return}
+  var brChecked = document.querySelector('input[name="block_reason"]:checked')
+  var blockReason = brChecked ? brChecked.value : ''
+  var blockDesc   = document.getElementById('t_block_desc') ? document.getElementById('t_block_desc').value.trim() : ''
+  const body={
+    title, description:document.getElementById('t_desc').value,
+    project_id:document.getElementById('t_proj').value||null,
+    assignee_id:document.getElementById('t_assign').value||null,
+    status:document.getElementById('t_status').value,
+    priority:document.getElementById('t_pri').value||null,
+    progress:parseInt(document.getElementById('t_prog').value),
+    start_date:document.getElementById('t_start').value||null,
+    due_date:document.getElementById('t_due').value||null,
+    file_ref:document.getElementById('t_cad').value||null,
+    block_reason: blockReason||null,
+    block_description: blockDesc||null,
+    recur_type: (document.getElementById('t_recur_type')||{}).value||null,
+    recur_interval: parseInt((document.getElementById('t_recur_interval')||{}).value||'1'),
+    blocked_by:[]
+  }
+  try{
+    var result
+    if(state.editingTaskId){
+      result = await api('/api/tasks/' + state.editingTaskId, {method:'PATCH', body:JSON.stringify(body)})
+      state.tasks = state.tasks.map(t => t.id===state.editingTaskId ? Object.assign({},t,result,{blocked_by}) : t)
+      toast('Task updated')
+    } else {
+      result = await api('/api/tasks', {method:'POST', body:JSON.stringify(body)})
+      state.tasks.unshift(result)
+      toast('Task created')
+    }
+    closeModal('taskModal'); renderView(); renderSidebar()
+    if(state.selectedTaskId) openDetail(state.selectedTaskId)
+
+    // Open mailto if assignee was set and has an email
+    if(result && result._notify_assignee && result._notify_assignee.email){
+      var proj    = state.projects.find(function(p){ return p.id === result.project_id })
+      var assigner = state.user ? state.user.name : ''
+      // Small delay so modal closes first
+      setTimeout(function(){
+        if(confirm('Open email app to notify ' + result._notify_assignee.name + ' about this assignment?')){
+          openAssignmentMailto(result, result._notify_assignee, assigner, proj)
+        }
+      }, 400)
+    }
+  }catch(e){toast(e.message,'error')}
+}
+
+// ==============================================================
+// SEARCH
+// ==============================================================
+function onSearch(){
+  const q=document.getElementById('gSearch').value.toLowerCase().trim()
+  const dd=document.getElementById('searchDD')
+  if(!q){dd.style.display='none';return}
+  const results=state.tasks.filter(t=>
+    t.title.toLowerCase().includes(q)||
+    (state.projects.find(p=>p.id===t.project_id)||{}).name?.toLowerCase().includes(q)||
+    (state.users.find(u=>u.id===t.assignee_id)||{}).name?.toLowerCase().includes(q)
+  ).slice(0,7)
+  if(!results.length){dd.style.display='none';return}
+  dd.innerHTML=results.map(t=>{
+    const proj=state.projects.find(p=>p.id===t.project_id)
+    return`<div class="search-item" onclick="openDetail('${t.id}');document.getElementById('gSearch').value='';document.getElementById('searchDD').style.display='none'">
+      <div style="width:7px;height:7px;border-radius:50%;flex-shrink:0;background:${proj?.color||'#4a5275'}"></div>
+      <div><div style="font-size:11px;color:var(--t1);font-weight:500">${esc(t.title)}</div>
+      <div style="font-size:9px;color:var(--t3)">${proj?esc(proj.name):''} . ${esc(t.status)}</div></div>
+    </div>`
+  }).join('')
+  dd.style.display='block'
+}
+
+// ==============================================================
+// PROFILE
+// ==============================================================
+function toggleProfile(){
+  const p=document.getElementById('profilePanel')
+  p.classList.toggle('open')
+  if(p.classList.contains('open')) renderProfile()
+}
+function closeProfile(){document.getElementById('profilePanel').classList.remove('open')}
+
+function renderProfile(){
+  const u=state.user; if(!u) return
+  document.getElementById('profAvatar').style.background=u.color
+  document.getElementById('profAvatar').textContent=u.initials
+  document.getElementById('profName').textContent=u.name
+  document.getElementById('profNameIn').value=u.name
+  document.getElementById('profIniIn').value=u.initials
+  document.getElementById('profColor').value=u.color
+  var _ei=document.getElementById('profEmailIn'); if(_ei) _ei.value=(u.email&&u.email!=='PENDING_APPROVAL')?u.email:''
+  document.getElementById('profSwatches').innerHTML=SWATCHES.map(c=>
+    `<div class="swatch${c===u.color?' on':''}" data-color="${c}" style="background:${c}" onclick="selectProfColor('${c}')"></div>`
+  ).join('')
+  // Online list
+  fetch('/api/presence').then(r=>r.json()).then(data=>{
+    const list=document.getElementById('onlineList')
+    if(!data.length){list.innerHTML='<span>Only you right now</span>';return}
+    list.innerHTML=data.map(d=>`
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <span class="online-dot"></span>
+        <div class="avatar" style="width:18px;height:18px;font-size:7px;background:${d.color}">${esc(d.initials)}</div>
+        <span style="color:var(--t2)">${esc(d.user_name)}${d.user_id===u.sub||d.user_id===u.id?' <span style="color:var(--t3)">(you)</span>':''}</span>
+      </div>`).join('')
+  })
+}
+
+function selectProfColor(c){
+  document.getElementById('profColor').value=c
+  document.querySelectorAll('#profSwatches .swatch').forEach(s=>{
+    s.classList.toggle('on',s.dataset.color===c)
+  })
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16)
+  return`rgb(${r},${g},${b})`
+}
+
+async function saveProfile(){
+  const name     = document.getElementById('profNameIn').value.trim()
+  const initials = document.getElementById('profIniIn').value.trim().toUpperCase()
+  const color    = document.getElementById('profColor').value
+  const emailEl  = document.getElementById('profEmailIn')
+  const email    = emailEl ? emailEl.value.trim() : null
+  if(!name || !initials){ toast('Name and initials required','error'); return }
+  const updates  = {name, initials, color}
+  if(email !== null) updates.email = email || null
+  try{
+    await api('/api/users', {method:'PATCH', body:JSON.stringify(updates)})
+    state.user = Object.assign({}, state.user, {name, initials, color, email})
+    updateHeaderUser(); renderProfile(); toast('Profile updated')
+  }catch(e){ toast(e.message,'error') }
+}
+async function changePin(){
+  const cur=document.getElementById('curPin').value
+  const np=document.getElementById('newPin').value
+  const cp=document.getElementById('confPin').value
+  if(!cur||!np||!cp){toast('Fill in all PIN fields','error');return}
+  if(np!==cp){toast('New PINs do not match','error');return}
+  if(!/^\d{4}$/.test(np)){toast('PIN must be 4 digits','error');return}
+  try{
+    await api('/api/users',{method:'PATCH',body:JSON.stringify({pin:np,currentPin:cur})})
+    document.getElementById('curPin').value=''
+    document.getElementById('newPin').value=''
+    document.getElementById('confPin').value=''
+    toast('PIN updated')
+  }catch(e){toast(e.message,'error')}
+}
+
+// ==============================================================
+// ADMIN
+// ==============================================================
+function openAdminModal(){
+  // Re-fetch users to get latest pending registrations
+  fetch('/api/users').then(function(r){ return r.json() }).then(function(data){
+    if(Array.isArray(data)) state.users = data
+    renderAdminUsers()
+    renderAdminSwatches()
+    checkPendingBadge()
+  })
+  openModal('adminModal')
+}
+function checkPendingBadge(){
+  var pending = state.users.filter(function(u){ return u.email === 'PENDING_APPROVAL' }).length
+  var badge   = document.getElementById('pendingBadge')
+  var adminBtn= document.getElementById('adminBtn')
+  if(!badge || !adminBtn) return
+  var isAdmin = state.user && (state.user.is_admin || state.user.isAdmin)
+  if(pending > 0 && isAdmin){
+    badge.textContent = pending
+    badge.style.display = 'flex'
+    adminBtn.style.border = '1px solid var(--rd)'
+  } else {
+    badge.style.display = 'none'
+    adminBtn.style.border = '1px solid var(--bd)'
+  }
+}
+
+function renderAdminUsers(){
+  var pending = state.users.filter(function(u){ return u.email === 'PENDING_APPROVAL' })
+  var active  = state.users.filter(function(u){ return u.email !== 'PENDING_APPROVAL' })
+  var html = ''
+
+  // ── Pending section ──
+  if(pending.length){
+    html += '<div style="padding:8px 16px 6px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--yw);background:rgba(255,183,0,.06);border-bottom:1px solid var(--bd)">'
+    html += 'Pending Approval (' + pending.length + ')</div>'
+    pending.forEach(function(u){
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--bd);background:rgba(255,183,0,.04)">'
+      html += '<div class="avatar" style="width:32px;height:32px;font-size:11px;background:' + u.color + '">' + esc(u.initials) + '</div>'
+      html += '<div style="flex:1">'
+      html += '<div style="font-size:12px;font-weight:600;color:var(--t1)">' + esc(u.name) + ' <span style="font-size:8px;color:var(--yw);border:1px solid rgba(255,183,0,.4);padding:1px 5px;border-radius:3px">PENDING</span></div>'
+      html += '<div style="font-size:9px;color:var(--t3)">Registered — awaiting approval</div>'
+      html += '</div>'
+      html += '<button class="btn btn-p" style="font-size:9px;padding:5px 12px" onclick="adminApproveUser(\'' + u.id + '\')">Approve</button>'
+      html += '<button class="btn btn-r" style="font-size:9px;padding:5px 10px" onclick="adminRemoveUser(\'' + u.id + '\',\'' + esc(u.name) + '\')">Reject</button>'
+      html += '</div>'
+    })
+  }
+
+  // ── Active members section ──
+  if(active.length){
+    html += '<div style="padding:8px 16px 6px;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);border-bottom:1px solid var(--bd)">'
+    html += 'Active Members (' + active.length + ')</div>'
+    active.forEach(function(u){
+      var isSelf = state.user && (state.user.sub === u.id || state.user.id === u.id)
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd)">'
+      html += '<div class="avatar" style="width:32px;height:32px;font-size:11px;background:' + u.color + '">' + esc(u.initials) + '</div>'
+      html += '<div style="flex:1">'
+      html += '<div style="font-size:12px;font-weight:600;color:var(--t1)">' + esc(u.name)
+      if(u.is_admin) html += ' <span style="font-size:8px;color:var(--ac)">ADMIN</span>'
+      if(isSelf)     html += ' <span style="font-size:8px;color:var(--t3)">(you)</span>'
+      html += '</div>'
+      html += '<div style="font-size:9px;color:var(--t3)">' + ((u.email && u.email !== 'PENDING_APPROVAL') ? esc(u.email) : 'No email set') + '</div>'
+      html += '</div>'
+      // Admin toggle
+      html += '<button onclick="adminToggleAdmin(\'' + u.id + '\',' + u.is_admin + ')" '
+      html += 'style="font-size:9px;padding:4px 8px;background:none;border-radius:5px;cursor:pointer;border:1px solid ' + (u.is_admin ? 'var(--ac)' : 'var(--bd)') + ';color:' + (u.is_admin ? 'var(--ac)' : 'var(--t3)') + '">'
+      html += (u.is_admin ? 'Admin On' : 'Admin Off') + '</button>'
+      if(!isSelf) html += '<button class="btn btn-g" style="font-size:9px;padding:4px 8px" onclick="adminResetPin(\'' + u.id + '\',\'' + esc(u.name) + '\')">Reset PIN</button>'
+      if(!isSelf) html += '<button class="btn btn-r" style="font-size:9px;padding:4px 8px" onclick="adminRemoveUser(\'' + u.id + '\',\'' + esc(u.name) + '\')">Remove</button>'
+      html += '</div>'
+    })
+  }
+
+  if(!pending.length && !active.length){
+    html = '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">No users found</div>'
+  }
+
+  document.getElementById('adminUserList').innerHTML = html
+  checkPendingBadge()
+}
+
+async function adminApproveUser(id){
+  try{
+    await api('/api/users/' + id, {method:'PATCH', body:JSON.stringify({email: null, is_admin: false})})
+    var u = state.users.find(function(x){ return x.id === id })
+    if(u) u.email = null
+    renderAdminUsers()
+    toast('User approved — they can now sign in')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function adminToggleAdmin(id, currentlyAdmin){
+  var u = state.users.find(function(x){ return x.id===id })
+  if(!u) return
+  var action = currentlyAdmin ? 'Remove admin from ' : 'Give admin to '
+  if(!confirm(action + u.name + '?')) return
+  try{
+    await api('/api/users/' + id, {method:'PATCH', body:JSON.stringify({is_admin: !currentlyAdmin})})
+    u.is_admin = !currentlyAdmin
+    renderAdminUsers()
+    toast(u.name + (u.is_admin ? ' is now an admin' : ' is no longer an admin'))
+  } catch(e){ toast(e.message,'error') }
+}
+function renderAdminSwatches(){
+  const cur=document.getElementById('adm_color').value
+  document.getElementById('admSwatches').innerHTML=SWATCHES.map(c=>
+    `<div class="swatch${c===cur?' on':''}" data-color="${c}" style="background:${c}" onclick="document.getElementById('adm_color').value='${c}';renderAdminSwatches()"></div>`
+  ).join('')
+}
+async function adminAddUser(){
+  const name=document.getElementById('adm_name').value.trim()
+  const initials=document.getElementById('adm_ini').value.trim().toUpperCase()
+  const pin=document.getElementById('adm_pin').value
+  const color=document.getElementById('adm_color').value
+  if(!name||!initials||!pin){toast('All fields required','error');return}
+  if(!/^\d{4}$/.test(pin)){toast('PIN must be 4 digits','error');return}
+  try{
+    const u=await api('/api/users',{method:'POST',body:JSON.stringify({name,initials,pin,color})})
+    state.users.push(u)
+    document.getElementById('adm_name').value=''
+    document.getElementById('adm_ini').value=''
+    document.getElementById('adm_pin').value=''
+    renderAdminUsers(); renderSidebar(); toast(name+' added')
+  }catch(e){toast(e.message,'error')}
+}
+async function adminResetPin(id,name){
+  const pin=prompt(`Enter new 4-digit PIN for ${name}:`)
+  if(!pin) return
+  if(!/^\d{4}$/.test(pin)){toast('PIN must be 4 digits','error');return}
+  try{
+    await api(`/api/users/${id}`,{method:'PATCH',body:JSON.stringify({pin})})
+    toast('PIN reset')
+  }catch(e){toast(e.message,'error')}
+}
+async function adminRemoveUser(id,name){
+  if(!confirm(`Remove ${name}?`)) return
+  try{
+    await api(`/api/users/${id}`,{method:'DELETE'})
+    state.users=state.users.filter(u=>u.id!==id)
+    renderAdminUsers(); toast(name+' removed')
+  }catch(e){toast(e.message,'error')}
+}
+
+// ==============================================================
+// PROJECTS
+// ==============================================================
+function renderProjList(){
+  document.getElementById('projList').innerHTML = state.projects.map(p => {
+    const editId = 'pe_' + p.id
+    return '<div style="border-bottom:1px solid var(--bd)">' +
+      '<div style="display:flex;align-items:center;gap:10px;padding:9px 16px">' +
+        '<div style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:' + p.color + '"></div>' +
+        '<div style="flex:1">' +
+          '<div style="font-size:12px;font-weight:600;color:var(--t1)">' + esc(p.name) + '</div>' +
+          (p.description ? '<div style="font-size:9px;color:var(--t3)">' + esc(p.description) + '</div>' : '') +
+        '</div>' +
+        '<button onclick="toggleProjEdit(\'' + p.id + '\')" style="background:none;border:1px solid var(--bd);border-radius:5px;color:var(--t3);font-size:10px;padding:3px 8px;cursor:pointer">Edit</button>' +
+        '<button onclick="deleteProject(\'' + p.id + '\')" style="background:none;border:1px solid rgba(255,71,87,.3);border-radius:5px;color:var(--rd);font-size:10px;padding:3px 8px;cursor:pointer">Delete</button>' +
+      '</div>' +
+      '<div id="' + editId + '" style="display:none;padding:10px 16px;background:var(--s2);border-top:1px solid var(--bd)">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">' +
+          '<div><label style="font-size:9px;color:var(--t3);display:block;margin-bottom:4px">Name</label>' +
+            '<input id="pe_name_' + p.id + '" value="' + esc(p.name) + '" style="font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1);width:100%"></div>' +
+          '<div><label style="font-size:9px;color:var(--t3);display:block;margin-bottom:4px">Colour</label>' +
+            '<div style="display:flex;gap:4px;flex-wrap:wrap" id="pe_sw_' + p.id + '">' +
+              SWATCHES.map(c => '<div class="swatch' + (c===p.color?' on':'') + '" data-color="' + c + '" style="background:' + c + ';width:16px;height:16px" onclick="pickProjColor(\'' + p.id + '\',\'' + c + '\')"></div>').join('') +
+            '</div><input type="hidden" id="pe_color_' + p.id + '" value="' + p.color + '"></div>' +
+        '</div>' +
+        '<div style="margin-bottom:8px"><label style="font-size:9px;color:var(--t3);display:block;margin-bottom:4px">Description</label>' +
+          '<input id="pe_desc_' + p.id + '" value="' + esc(p.description||'') + '" style="font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1);width:100%"></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+          '<div><label style="font-size:9px;color:var(--t3);display:block;margin-bottom:4px">Start Date</label>' +
+            '<input type="date" id="pe_start_' + p.id + '" value="' + (p.start_date||'') + '" style="font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1);width:100%"></div>' +
+          '<div><label style="font-size:9px;color:var(--t3);display:block;margin-bottom:4px">End Date</label>' +
+            '<input type="date" id="pe_end_' + p.id + '" value="' + (p.end_date||'') + '" style="font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1);width:100%"></div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;justify-content:flex-end">' +
+          '<button onclick="toggleProjEdit(\'' + p.id + '\')" style="font-size:10px;padding:5px 12px;background:none;border:1px solid var(--bd);border-radius:6px;color:var(--t3);cursor:pointer">Cancel</button>' +
+          '<button onclick="saveProjectEdit(\'' + p.id + '\')" style="font-size:10px;padding:5px 12px;background:var(--ac);border:none;border-radius:6px;color:#fff;cursor:pointer">Save</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  }).join('')
+}
+function toggleProjEdit(id){
+  const el = document.getElementById('pe_' + id)
+  if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none'
+}
+function pickProjColor(id, c){
+  document.getElementById('pe_color_' + id).value = c
+  document.querySelectorAll('#pe_sw_' + id + ' .swatch').forEach(s => s.classList.toggle('on', s.dataset.color === c))
+}
+async function saveProjectEdit(id){
+  const name  = document.getElementById('pe_name_' + id).value.trim()
+  const color = document.getElementById('pe_color_' + id).value
+  const desc  = document.getElementById('pe_desc_' + id).value.trim()
+  const start = document.getElementById('pe_start_' + id).value
+  const end   = document.getElementById('pe_end_' + id).value
+  if(!name){ toast('Name required','error'); return }
+  try{
+    const p = await api('/api/projects/' + id, {method:'PATCH', body:JSON.stringify({
+      name, color, description: desc||null,
+      start_date: start||null, end_date: end||null
+    })})
+    const idx = state.projects.findIndex(x => x.id === id)
+    if(idx !== -1) state.projects[idx] = p
+    renderProjList(); renderSidebar(); toast('Project updated')
+  } catch(e){ toast(e.message,'error') }
+}
+async function deleteProject(id){
+  const p = state.projects.find(x => x.id === id)
+  const taskCount = state.tasks.filter(t => t.project_id === id).length
+  const msg = taskCount > 0
+    ? 'Delete ' + (p?p.name:'this project') + '? It has ' + taskCount + ' tasks which will also be deleted.'
+    : 'Delete ' + (p?p.name:'this project') + '?'
+  if(!confirm(msg)) return
+  try{
+    await api('/api/projects/' + id, {method:'DELETE'})
+    state.projects = state.projects.filter(x => x.id !== id)
+    state.tasks    = state.tasks.filter(t => t.project_id !== id)
+    if(state.activeProject === id) setProject('all', document.getElementById('proj-all'))
+    renderProjList(); renderSidebar(); renderView(); toast('Project deleted')
+  } catch(e){ toast(e.message,'error') }
+}
+function pickNewProjColor(c){
+  document.getElementById('pf_color').value = c
+  document.querySelectorAll('#pf_swatches .swatch').forEach(s => s.classList.toggle('on', s.dataset.color === c))
+}
+function toggleProjForm(){
+  const f=document.getElementById('projForm')
+  f.style.display=f.style.display==='none'?'block':'none'
+  if(f.style.display==='block'){
+    document.getElementById('pf_name').value=''
+    document.getElementById('pf_desc').value=''
+    document.getElementById('pf_start').value=''
+    document.getElementById('pf_end').value=''
+    document.getElementById('pf_color').value='#4f8eff'
+    document.getElementById('pf_swatches').innerHTML=SWATCHES.map(c=>
+      '<div class="swatch' + (c==='#4f8eff'?' on':'') + '" data-color="' + c + '" style="background:' + c + '" onclick="pickNewProjColor(\'' + c + '\')"></div>'
+    ).join('')
+  }
+}
+async function saveProject(){
+  const name=document.getElementById('pf_name').value.trim()
+  if(!name){toast('Name is required','error');return}
+  try{
+    const p=await api('/api/projects',{method:'POST',body:JSON.stringify({
+      name,description:document.getElementById('pf_desc').value||null,
+      color:document.getElementById('pf_color').value,
+      start_date:document.getElementById('pf_start').value||null,
+      end_date:document.getElementById('pf_end').value||null
+    })})
+    state.projects.push(p); renderProjList(); renderSidebar()
+    toggleProjForm(); toast('Project created')
+  }catch(e){toast(e.message,'error')}
+}
+
+// ==============================================================
+// 30s POLL
+// ==============================================================
+async function poll(){
+  try{
+    const [tasks,projects,users]=await Promise.all([
+      api('/api/tasks'),api('/api/projects'),api('/api/users')
+    ])
+    state.tasks=tasks; state.projects=projects; state.users=users
+    renderView(); renderSidebar(); checkPendingBadge()
+  }catch(e){}
+}
+
+
+// ==============================================================
+// TEAM MODAL (mirrors admin but adds email, visible to all)
+// ==============================================================
+function teamMemberRow(u, isAdm){
+  const email = (u.email && u.email !== 'PENDING_APPROVAL') ? esc(u.email) : 'No email set'
+  const adminBadge = u.is_admin ? ' <span style="font-size:8px;color:var(--ac)">ADMIN</span>' : ''
+  let html = '<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd)">'
+  html += '<div class="avatar" style="width:32px;height:32px;font-size:11px;background:' + u.color + '">' + esc(u.initials) + '</div>'
+  html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t1)">' + esc(u.name) + adminBadge + '</div>'
+  html += '<div style="font-size:9px;color:var(--t3)">' + email + '</div></div>'
+  if(isAdm){
+    html += btnSmall('btn-g', 'adminResetPin', [u.id, u.name], 'Reset PIN')
+    if(!u.is_admin) html += btnSmall('btn-r', 'adminRemoveUser', [u.id, u.name], 'Remove')
+  }
+  html += '</div>'
+  return html
+}
+function btnSmall(cls, fn, args, label){
+  const safe = args.map(a => String(a).replace(/'/g, ''))
+  const call = fn + '(' + safe.map(a => "'" + a + "'").join(',') + ')'
+  return '<button class="btn ' + cls + '" style="font-size:9px;padding:4px 8px" onclick="' + call + '">' + label + '</button>'
+}
+function selectUserEncoded(encoded){
+  const u = JSON.parse(decodeURIComponent(encoded))
+  selectUser(JSON.stringify(u))
+}
+function pickRegColor(el, c){
+  document.getElementById('reg_color').value = c
+  document.querySelectorAll('#reg_swatches .swatch').forEach(s => s.classList.toggle('on', s.dataset.color === c))
+}
+function openTeamModal(){
+  renderTeamList()
+  renderTeamSwatches()
+  openModal('teamModal')
+}
+
+function renderTeamList(){
+  const isAdm = state.user && (state.user.is_admin || state.user.isAdmin)
+  document.getElementById('teamList').innerHTML = state.users
+    .filter(u => u.email !== 'PENDING_APPROVAL')
+    .map(u => teamMemberRow(u, isAdm)).join('')
+}
+
+function renderTeamSwatches(){
+  const cur = document.getElementById('tm_color').value
+  document.getElementById('tmSwatches').innerHTML = SWATCHES.map(c =>
+    `<div class="swatch${c === cur ? ' on' : ''}" data-color="${c}" style="background:${c}" onclick="document.getElementById('tm_color').value='${c}';renderTeamSwatches()"></div>`
+  ).join('')
+}
+
+async function teamAddUser(){
+  const name     = document.getElementById('tm_name').value.trim()
+  const initials = document.getElementById('tm_ini').value.trim().toUpperCase()
+  const pin      = document.getElementById('tm_pin').value
+  const color    = document.getElementById('tm_color').value
+  const email    = document.getElementById('tm_email').value.trim()
+  if(!name || !initials || !pin){ toast('Name, initials and PIN required','error'); return }
+  if(!/^\d{4}$/.test(pin)){ toast('PIN must be 4 digits','error'); return }
+  try{
+    const u = await api('/api/users',{method:'POST',body:JSON.stringify({name,initials,pin,color,email:email||null})})
+    state.users.push(u)
+    document.getElementById('tm_name').value = ''
+    document.getElementById('tm_ini').value  = ''
+    document.getElementById('tm_pin').value  = ''
+    document.getElementById('tm_email').value = ''
+    renderTeamList(); renderSidebar(); toast(name + ' added')
+  } catch(e){ toast(e.message,'error') }
+}
+
+// ==============================================================
+// STATUS & PRIORITY MODAL
+// ==============================================================
+function openStatusModal(){
+  renderStatusList()
+  renderPriorityList()
+  openModal('statusModal')
+}
+
+function renderStatusList(){
+  document.getElementById('statusList').innerHTML = state.statuses.map(s => {
+    const eId = 'se_' + s.id
+    return '<div style="border-bottom:1px solid var(--bd)">' +
+      '<div style="display:flex;align-items:center;gap:8px;padding:8px 0">' +
+        '<div style="width:10px;height:10px;border-radius:50%;background:' + s.color + ';flex-shrink:0"></div>' +
+        '<span style="flex:1;font-size:12px;color:var(--t1)">' + esc(s.name) + '</span>' +
+        (s.is_done ? '<span style="font-size:9px;color:var(--gn);padding:1px 5px;border:1px solid rgba(45,206,137,.3);border-radius:3px">Done</span>' : '') +
+        '<button onclick="toggleInlineEdit(\'' + eId + '\')" style="background:none;border:1px solid var(--bd);border-radius:4px;color:var(--t3);font-size:9px;padding:2px 7px;cursor:pointer">Edit</button>' +
+        (!s.is_default ? '<button onclick="deleteStatus(\'' + s.id + '\')" style="background:none;border:1px solid rgba(255,71,87,.3);border-radius:4px;color:var(--rd);font-size:9px;padding:2px 7px;cursor:pointer">Del</button>' : '') +
+      '</div>' +
+      '<div id="' + eId + '" style="display:none;padding:8px;background:var(--s2);border-radius:8px;margin-bottom:6px">' +
+        '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">' +
+          '<input id="' + eId + '_name" value="' + esc(s.name) + '" style="flex:1;font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">' +
+          '<input type="color" id="' + eId + '_color" value="' + s.color + '" style="width:32px;height:30px;border-radius:5px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;padding:2px">' +
+          '<label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t2);cursor:pointer;white-space:nowrap">' +
+            '<input type="checkbox" id="' + eId + '_done"' + (s.is_done?' checked':'') + ' style="accent-color:var(--ac)"> Done</label>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;justify-content:flex-end">' +
+          '<button onclick="toggleInlineEdit(\'' + eId + '\')" style="font-size:9px;padding:4px 10px;background:none;border:1px solid var(--bd);border-radius:5px;color:var(--t3);cursor:pointer">Cancel</button>' +
+          '<button onclick="saveStatusEdit(\'' + s.id + '\',\'' + eId + '\')" style="font-size:9px;padding:4px 10px;background:var(--ac);border:none;border-radius:5px;color:#fff;cursor:pointer">Save</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  }).join('')
+}
+function toggleInlineEdit(id){
+  const el = document.getElementById(id)
+  if(el) el.style.display = el.style.display==='none'?'block':'none'
+}
+async function saveStatusEdit(id, eId){
+  const name  = document.getElementById(eId+'_name').value.trim()
+  const color = document.getElementById(eId+'_color').value
+  const isDone = document.getElementById(eId+'_done').checked
+  if(!name){ toast('Name required','error'); return }
+  try{
+    const s = await api('/api/statuses/'+id, {method:'PATCH', body:JSON.stringify({name,color,is_done:isDone})})
+    const idx = state.statuses.findIndex(x=>x.id===id)
+    if(idx!==-1) state.statuses[idx] = {...state.statuses[idx], ...s}
+    renderStatusList(); toast('Status updated')
+  } catch(e){ toast(e.message,'error') }
+}
+
+function renderPriorityList(){
+  document.getElementById('priorityList').innerHTML = state.priorities.map(p => {
+    const eId = 'prE_' + p.id
+    return '<div style="border-bottom:1px solid var(--bd)">' +
+      '<div style="display:flex;align-items:center;gap:8px;padding:8px 0">' +
+        '<div style="width:10px;height:10px;border-radius:50%;background:' + p.color + ';flex-shrink:0"></div>' +
+        '<span style="flex:1;font-size:12px;color:var(--t1)">' + esc(p.name) + '</span>' +
+        '<button onclick="toggleInlineEdit(\'' + eId + '\')" style="background:none;border:1px solid var(--bd);border-radius:4px;color:var(--t3);font-size:9px;padding:2px 7px;cursor:pointer">Edit</button>' +
+        (!p.is_default ? '<button onclick="deletePriority(\'' + p.id + '\')" style="background:none;border:1px solid rgba(255,71,87,.3);border-radius:4px;color:var(--rd);font-size:9px;padding:2px 7px;cursor:pointer">Del</button>' : '') +
+      '</div>' +
+      '<div id="' + eId + '" style="display:none;padding:8px;background:var(--s2);border-radius:8px;margin-bottom:6px">' +
+        '<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">' +
+          '<input id="' + eId + '_name" value="' + esc(p.name) + '" style="flex:1;font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">' +
+          '<input type="color" id="' + eId + '_color" value="' + p.color + '" style="width:32px;height:30px;border-radius:5px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;padding:2px">' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;justify-content:flex-end">' +
+          '<button onclick="toggleInlineEdit(\'' + eId + '\')" style="font-size:9px;padding:4px 10px;background:none;border:1px solid var(--bd);border-radius:5px;color:var(--t3);cursor:pointer">Cancel</button>' +
+          '<button onclick="savePriorityEdit(\'' + p.id + '\',\'' + eId + '\')" style="font-size:9px;padding:4px 10px;background:var(--ac);border:none;border-radius:5px;color:#fff;cursor:pointer">Save</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  }).join('')
+}
+async function savePriorityEdit(id, eId){
+  const name  = document.getElementById(eId+'_name').value.trim()
+  const color = document.getElementById(eId+'_color').value
+  if(!name){ toast('Name required','error'); return }
+  try{
+    const p = await api('/api/priorities/'+id, {method:'PATCH', body:JSON.stringify({name,color})})
+    const idx = state.priorities.findIndex(x=>x.id===id)
+    if(idx!==-1) state.priorities[idx] = {...state.priorities[idx], ...p}
+    renderPriorityList(); toast('Priority updated')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function addStatus(){
+  const name  = document.getElementById('ns_name').value.trim()
+  const color = document.getElementById('ns_color').value
+  const isDone = document.getElementById('ns_done').checked
+  if(!name){ toast('Name required','error'); return }
+  try{
+    const s = await api('/api/statuses',{method:'POST',body:JSON.stringify({name,color,is_done:isDone,is_default:false,sort_order:state.statuses.length})})
+    state.statuses.push(s)
+    document.getElementById('ns_name').value = ''
+    renderStatusList(); toast('Status added')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function addPriority(){
+  const name  = document.getElementById('np_name').value.trim()
+  const color = document.getElementById('np_color').value
+  if(!name){ toast('Name required','error'); return }
+  try{
+    const p = await api('/api/priorities',{method:'POST',body:JSON.stringify({name,color,is_default:false,sort_order:state.priorities.length})})
+    state.priorities.push(p)
+    document.getElementById('np_name').value = ''
+    renderPriorityList(); toast('Priority added')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function deleteStatus(id){
+  if(!confirm('Delete this status?')) return
+  try{
+    await api('/api/statuses/'+id,{method:'DELETE'})
+    state.statuses = state.statuses.filter(s => s.id !== id)
+    renderStatusList(); toast('Status deleted')
+  } catch(e){ toast(e.message,'error') }
+}
+
+async function deletePriority(id){
+  if(!confirm('Delete this priority?')) return
+  try{
+    await api('/api/priorities/'+id,{method:'DELETE'})
+    state.priorities = state.priorities.filter(p => p.id !== id)
+    renderPriorityList(); toast('Priority deleted')
+  } catch(e){ toast(e.message,'error') }
+}
+
+// ==============================================================
+// WEEKLY REPORT
+// ==============================================================
+function openReportModal(){
+  var sel = document.getElementById('rpt_proj')
+  sel.innerHTML = '<option value="all">All Projects</option>' +
+    state.projects.map(function(p){ return '<option value="' + p.id + '">' + esc(p.name) + '</option>' }).join('')
+  document.getElementById('rpt_from').value = (state.user && state.user.name) ? state.user.name : ''
+  buildReport()
+  openModal('reportModal')
+}
+
+function buildReport(){
+  var projId = document.getElementById('rpt_proj').value
+  var from   = document.getElementById('rpt_from').value || 'CIE Projects Team'
+  var ts     = projId === 'all' ? state.tasks : state.tasks.filter(function(t){ return t.project_id === projId })
+  var projs  = projId === 'all' ? state.projects : state.projects.filter(function(p){ return p.id === projId })
+  var date   = new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
+
+  var done     = ts.filter(function(t){ return isDone(t.status) }).length
+  var inProg   = ts.filter(function(t){ return !isDone(t.status) && t.status !== 'Backlog' }).length
+  var inRev    = ts.filter(function(t){ return t.status === 'Review' }).length
+  var overdue  = ts.filter(function(t){ return t.due_date && !isDone(t.status) && new Date(t.due_date) < new Date() })
+  var avgProg  = ts.length ? Math.round(ts.reduce(function(a,t){ return a+t.progress },0) / ts.length) : 0
+
+  // Attention items: overdue or critical
+  var attention = ts.filter(function(t){
+    return !isDone(t.status) && (
+      (t.due_date && new Date(t.due_date) < new Date()) ||
+      t.priority === 'Critical' || t.priority === 'RAYNEAU' ||
+      t.block_reason
+    )
+  })
+
+  var statColors = { 'In Progress':'#4f8eff', 'Review':'#7c5cfc', 'Done':'#2dce89', 'Backlog':'#9aa5cc' }
+  function statBadge(s){
+    var c = (state.statuses.find(function(x){ return x.name===s })||{}).color || '#9aa5cc'
+    return '<span style="background:' + c + '22;color:' + c + ';padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid ' + c + '44">' + esc(s) + '</span>'
+  }
+  function fmtDate(d){
+    return d ? new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : ''
+  }
+
+  var h = ''
+  h += '<div style="font-family:Georgia,serif;color:#111;padding:32px;background:#fff;max-width:760px">'
+
+  // Title
+  h += '<h1 style="font-size:26px;font-weight:700;margin:0 0 4px">CIE Ltd. Projects Department</h1>'
+  h += '<h2 style="font-size:18px;font-weight:400;color:#444;margin:0 0 6px">Weekly Status Report</h2>'
+  h += '<div style="font-size:12px;color:#888;margin-bottom:28px">Prepared by ' + esc(from) + ' &middot; ' + date + '</div>'
+  h += '<hr style="border:none;border-top:2px solid #e0e0e0;margin-bottom:28px">'
+
+  // Stats row
+  var stats = [
+    {label:'TOTAL TASKS',  val:ts.length,   color:'#4f8eff'},
+    {label:'IN PROGRESS',  val:inProg,      color:'#4f8eff'},
+    {label:'IN REVIEW',    val:inRev,       color:'#7c5cfc'},
+    {label:'COMPLETED',    val:done,        color:'#2dce89'},
+    {label:'OVERDUE',      val:overdue.length, color: overdue.length>0 ? '#ff4757' : '#aaa'},
+    {label:'AVG PROGRESS', val:avgProg+'%', color:avgProg>=70?'#2dce89':avgProg>=40?'#ffb800':'#aaa'}
+  ]
+  h += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px">'
+  stats.forEach(function(s){
+    h += '<div style="background:#f8f9ff;border:1px solid #e8eaf6;border-radius:10px;padding:14px 10px;text-align:center">'
+    h += '<div style="font-size:28px;font-weight:800;color:' + s.color + ';font-family:Georgia,sans-serif">' + s.val + '</div>'
+    h += '<div style="font-size:9px;color:#888;letter-spacing:.8px;margin-top:4px">' + s.label + '</div>'
+    h += '</div>'
+  })
+  h += '</div>'
+
+  // Attention items
+  if(attention.length){
+    h += '<div style="margin-bottom:24px">'
+    h += '<div style="color:#ff4757;font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px">! Items Needing Attention</div>'
+    h += '<div style="border-top:2px solid #ff4757;padding-top:10px">'
+    attention.forEach(function(t){
+      var isOverdue = t.due_date && new Date(t.due_date)<new Date()
+      var brColor   = {Agency:'#ff7730',Rayneau:'#b000ff',Custom:'#ff4757'}[t.block_reason]||'#ff4757'
+      var label, lc
+      if(t.block_reason){ label = 'Blocked'; lc = brColor }
+      else if(isOverdue){ label = 'Overdue'; lc = '#ff4757' }
+      else { label = t.priority; lc = pc(label) }
+      h += '<div style="padding:8px 0;border-bottom:1px solid #f0f0f0">'
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px">'
+      h += '<span style="font-size:13px;font-weight:600">' + esc(t.title) + '</span>'
+      h += '<span style="background:' + lc + '22;color:' + lc + ';padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid ' + lc + '44;white-space:nowrap">' + esc(label) + '</span>'
+      h += '</div>'
+      if(t.block_reason){
+        h += '<div style="font-size:11px;color:#888;margin-top:3px">Blocked by: <strong>' + esc(t.block_reason) + '</strong>'
+        if(t.block_description) h += ' &mdash; ' + esc(t.block_description)
+        h += '</div>'
+      } else if(isOverdue){
+        h += '<div style="font-size:11px;color:#888;margin-top:2px">Overdue since ' + fmtDate(t.due_date) + '</div>'
+      } else {
+        h += '<div style="font-size:11px;color:#888;margin-top:2px">' + label + ' priority</div>'
+      }
+      h += '</div>'
+    })
+    h += '</div></div>'
+  }
+
+  // Per-project sections
+  projs.forEach(function(proj){
+    var pts      = ts.filter(function(t){ return t.project_id === proj.id })
+    if(!pts.length) return
+    var pdone    = pts.filter(function(t){ return isDone(t.status) }).length
+    var pprog    = pts.length ? Math.round(pts.reduce(function(a,t){return a+t.progress},0)/pts.length) : 0
+
+    h += '<div style="margin-bottom:28px">'
+    h += '<h3 style="font-size:17px;font-weight:700;color:' + proj.color + ';margin:0 0 4px">' + esc(proj.name) + '</h3>'
+    h += '<hr style="border:none;border-top:2px solid ' + proj.color + ';margin-bottom:8px">'
+    h += '<div style="font-size:11px;color:#888;margin-bottom:12px">'
+    h += pdone + '/' + pts.length + ' tasks done &middot; ' + pprog + '% overall progress'
+    if(proj.end_date) h += ' &middot; Target: ' + fmtDate(proj.end_date)
+    h += '</div>'
+
+    pts.forEach(function(t){
+      var asgn    = state.users.find(function(u){ return u.id===t.assignee_id })
+      var tOverdue= t.due_date && !isDone(t.status) && new Date(t.due_date) < new Date()
+      var brColor = {Agency:'#ff7730',Rayneau:'#b000ff',Custom:'#ff4757'}[t.block_reason] || '#ff4757'
+      h += '<div style="padding:10px 0;border-bottom:1px solid #f0f0f0">'
+      h += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+      h += '<div style="flex:1">'
+      h += '<div style="font-size:13px;font-weight:600;color:#111;margin-bottom:3px">' + esc(t.title) + '</div>'
+      h += '<div style="font-size:11px;color:#888;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:' + (t.block_reason?'5px':'0') + '">'
+      if(asgn) h += '<span>' + esc(asgn.name) + '</span>'
+      if(t.due_date) h += '<span style="color:' + (tOverdue?'#ff4757':'#888') + '">Due: ' + fmtDate(t.due_date) + (tOverdue?' (OVERDUE)':'') + '</span>'
+      h += '<span>' + t.progress + '% complete</span>'
+      if(t.file_ref){
+        var isUrl = t.file_ref.startsWith('http')
+        h += isUrl
+          ? '<a href="' + esc(t.file_ref) + '" style="color:#4f8eff">View File</a>'
+          : '<span style="font-family:monospace;color:#aaa">&#9842; ' + esc(t.file_ref) + '</span>'
+      }
+      h += '</div>'
+      // Block reason
+      if(t.block_reason){
+        h += '<div style="background:' + brColor + '11;border:1px solid ' + brColor + '33;border-radius:6px;padding:6px 10px;font-size:11px">'
+        h += '<span style="color:' + brColor + ';font-weight:700">BLOCKED — ' + esc(t.block_reason) + '</span>'
+        if(t.block_description) h += '<br><span style="color:#555;margin-top:2px;display:inline-block">' + esc(t.block_description) + '</span>'
+        h += '</div>'
+      }
+      h += '</div>'
+      h += statBadge(t.status)
+      h += '</div></div>'
+    })
+    h += '</div>'
+  })
+
+  // Footer
+  h += '<hr style="border:none;border-top:1px solid #eee;margin-top:20px">'
+  h += '<div style="font-size:10px;color:#bbb;margin-top:10px">Generated by Linework &middot; CIE Ltd. Projects Department &middot; ' + date + '</div>'
+  h += '</div>'
+
+  document.getElementById('rptPreview').innerHTML = h
+}
+
+function sendReport(){
+  var email   = document.getElementById('rpt_email').value
+  var from    = document.getElementById('rpt_from').value || 'CIE Projects Team'
+  var date    = new Date().toLocaleDateString('en-GB')
+  var subject = encodeURIComponent('[Linework] Weekly Status Report - ' + date)
+  // Plain text fallback for email
+  var ts     = state.tasks
+  var done   = ts.filter(function(t){ return isDone(t.status) }).length
+  var body   = 'Weekly Status Report\nPrepared by: ' + from + '\n\nTotal: ' + ts.length + ' tasks, ' + done + ' completed.\n\nSee full report in Linework: ' + window.location.origin
+  window.open('mailto:' + email + '?subject=' + subject + '&body=' + encodeURIComponent(body))
+}
+
+async function saveReportImage(){
+  // Use html2canvas if available, otherwise open print dialog
+  var preview = document.getElementById('rptPreview')
+  if(window.html2canvas){
+    try{
+      var canvas = await html2canvas(preview, {backgroundColor:'#ffffff', scale:2, useCORS:true})
+      var link = document.createElement('a')
+      var projId = document.getElementById('rpt_proj').value
+      var proj   = projId !== 'all' ? state.projects.find(function(p){ return p.id===projId }) : null
+      link.download = 'Linework-Report-' + (proj?proj.name.replace(/\s+/g,'-'):'All') + '-' + new Date().toISOString().slice(0,10) + '.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+      toast('Report saved as image')
+    }catch(e){ toast('Could not save image: ' + e.message,'error') }
+  } else {
+    // Load html2canvas on demand
+    var script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
+    script.onload = function(){ saveReportImage() }
+    script.onerror = function(){
+      // Fallback: print to PDF/image
+      var w = window.open('','_blank','width=850,height=1100')
+      w.document.write('<html><head><title>Linework Report</title></head><body style="margin:0">' + document.getElementById('rptPreview').outerHTML + '</body></html>')
+      w.document.close()
+      w.print()
+    }
+    document.head.appendChild(script)
+  }
+}
+
+
+
+// ==============================================================
+// EXPORT / IMPORT
+// ==============================================================
+function exportData(){
+  const payload = {
+    exportDate: new Date().toISOString(),
+    tasks:      state.tasks,
+    projects:   state.projects,
+    users:      state.users.map(u => ({...u, pin_hash: undefined})),
+    statuses:   state.statuses,
+    priorities: state.priorities
+  }
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'})
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'linework-backup-' + new Date().toISOString().slice(0,10) + '.json'
+  a.click()
+  toast('Backup downloaded')
+}
+
+async function importData(event){
+  const file = event.target.files[0]; if(!file) return
+  if(!confirm('Import this backup? This will overwrite all current data.')) return
+  try{
+    const text = await file.text()
+    const data = JSON.parse(text)
+    // Re-create all tasks from the backup via API
+    toast('Import not available in web mode - use Export for backup purposes', 'error')
+    // Note: Full import would require server-side bulk insert endpoint
+    // For now export/import is provided as read-only backup
+  } catch(e){
+    toast('Invalid backup file','error')
+  }
+  event.target.value = ''
+}
+
+// ══════════════════════════════════════════════════════════════
+// SUB-TASKS
+// ══════════════════════════════════════════════════════════════
+function buildSubtasks(t){
+  var subs = t.subtasks || []
+  var done = subs.filter(function(s){ return s.completed }).length
+  var html = '<div class="det-section">'
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+  html += '<div class="det-sec-title" style="margin:0">Sub-tasks (' + done + '/' + subs.length + ')</div>'
+  html += '</div>'
+  if(subs.length){
+    var pct = subs.length ? Math.round(done/subs.length*100) : 0
+    html += '<div class="pbar" style="margin-bottom:10px;height:3px"><div class="pbar-fill" style="width:' + pct + '%;background:' + (pct===100?'var(--gn)':'var(--ac)') + '"></div></div>'
+  }
+  subs.sort(function(a,b){ return a.sort_order-b.sort_order }).forEach(function(s){
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)">'
+    html += '<input type="checkbox" ' + (s.completed?'checked':'') + ' style="accent-color:var(--ac);cursor:pointer;width:14px;height:14px;flex-shrink:0" '
+    html += 'onchange="toggleSubtask(\'' + t.id + '\',\'' + s.id + '\',this.checked)">'
+    html += '<span id="sub_' + s.id + '" style="flex:1;font-size:11px;color:' + (s.completed?'var(--t3)':'var(--t2)') + ';' + (s.completed?'text-decoration:line-through':'') + '" '
+    html += 'ondblclick="renameSubtask(\'' + s.id + '\',\'' + t.id + '\')">'
+    html += esc(s.title) + '</span>'
+    html += '<button onclick="deleteSubtask(\'' + t.id + '\',\'' + s.id + '\')" style="background:none;border:none;color:var(--t3);font-size:11px;cursor:pointer;padding:0 3px;flex-shrink:0">x</button>'
+    html += '</div>'
+  })
+  // Add input
+  html += '<div style="display:flex;gap:6px;margin-top:8px">'
+  html += '<input id="sub_inp_' + t.id + '" placeholder="Add sub-task..." style="flex:1;font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">'
+  html += '<button onclick="addSubtask(\'' + t.id + '\')" style="background:var(--ac);border:none;border-radius:6px;color:#fff;font-size:11px;padding:4px 10px;cursor:pointer">+</button>'
+  html += '</div>'
+  html += '</div>'
+  return html
+}
+
+async function addSubtask(taskId){
+  var inp   = document.getElementById('sub_inp_' + taskId)
+  var title = inp ? inp.value.trim() : ''
+  if(!title){ toast('Enter a sub-task title','error'); return }
+  try{
+    var sub = await api('/api/tasks/' + taskId + '/subtasks', {method:'POST', body:JSON.stringify({title})})
+    var t   = state.tasks.find(function(x){ return x.id===taskId })
+    if(t){ if(!t.subtasks) t.subtasks=[]; t.subtasks.push(sub) }
+    if(inp) inp.value = ''
+    renderDetailBody(t)
+    // rewire after re-render
+    var newInp = document.getElementById('sub_inp_' + taskId)
+    if(newInp) newInp.onkeydown = function(e){ if(e.key==='Enter') addSubtask(taskId) }
+    renderView()
+  }catch(e){ toast(e.message,'error') }
+}
+
+async function toggleSubtask(taskId, subId, completed){
+  try{
+    var sub = await api('/api/tasks/' + taskId + '/subtasks/' + subId, {method:'PATCH', body:JSON.stringify({completed})})
+    var t   = state.tasks.find(function(x){ return x.id===taskId })
+    if(t && t.subtasks){ var s=t.subtasks.find(function(x){return x.id===subId}); if(s) s.completed=completed }
+    renderDetailBody(t)
+    renderView()
+  }catch(e){ toast(e.message,'error') }
+}
+
+async function deleteSubtask(taskId, subId){
+  try{
+    await api('/api/tasks/' + taskId + '/subtasks/' + subId, {method:'DELETE'})
+    var t = state.tasks.find(function(x){ return x.id===taskId })
+    if(t) t.subtasks = (t.subtasks||[]).filter(function(s){ return s.id!==subId })
+    renderDetailBody(t)
+    renderView()
+  }catch(e){ toast(e.message,'error') }
+}
+
+function renameSubtask(subId, taskId){
+  var el = document.getElementById('sub_' + subId)
+  if(!el) return
+  var cur = el.textContent
+  var inp = document.createElement('input')
+  inp.value = cur
+  inp.style.cssText = 'flex:1;font-size:10px;padding:3px 6px;background:var(--s3);border:1px solid var(--ac);border-radius:5px;color:var(--t1);outline:none'
+  el.replaceWith(inp)
+  inp.focus(); inp.select()
+  var save = async function(){
+    var newTitle = inp.value.trim()
+    if(!newTitle || newTitle===cur){ renderDetailBody(state.tasks.find(function(x){return x.id===taskId})); return }
+    try{
+      await api('/api/tasks/' + taskId + '/subtasks/' + subId, {method:'PATCH', body:JSON.stringify({title:newTitle})})
+      var t = state.tasks.find(function(x){return x.id===taskId})
+      if(t && t.subtasks){ var s=t.subtasks.find(function(x){return x.id===subId}); if(s) s.title=newTitle }
+      renderDetailBody(t)
+    }catch(e){ toast(e.message,'error') }
+  }
+  inp.addEventListener('blur', save)
+  inp.addEventListener('keydown', function(e){
+    if(e.key==='Enter') inp.blur()
+    if(e.key==='Escape') renderDetailBody(state.tasks.find(function(x){return x.id===taskId}))
+  })
+}
+
+// ══════════════════════════════════════════════════════════════
+// TIME TRACKING
+// ══════════════════════════════════════════════════════════════
+function buildTimeTracking(t){
+  var logs  = t.time_logs || []
+  var total = logs.reduce(function(a,l){ return a + parseFloat(l.hours) }, 0)
+  var html  = '<div class="det-section">'
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+  html += '<div class="det-sec-title" style="margin:0">Time Logged</div>'
+  html += '<span style="font-size:11px;font-weight:700;color:var(--ac)">' + total.toFixed(1) + ' hrs total</span>'
+  html += '</div>'
+  if(logs.length){
+    html += '<div style="max-height:120px;overflow-y:auto;margin-bottom:8px">'
+    logs.forEach(function(l){
+      var userId = state.user && (state.user.sub || state.user.id)
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd);font-size:10px">'
+      html += '<span style="color:var(--t3);flex-shrink:0">' + new Date(l.logged_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + '</span>'
+      html += '<span style="color:var(--t2);flex:1">' + esc(l.user_name) + (l.note?' \u2014 '+esc(l.note):'') + '</span>'
+      html += '<span style="color:var(--ac);font-weight:700;flex-shrink:0">' + parseFloat(l.hours).toFixed(1) + 'h</span>'
+      if(l.user_id === userId || (state.user && state.user.is_admin)){
+        html += '<button onclick="deleteTimeLog(\'' + t.id + '\',\'' + l.id + '\')" style="background:none;border:none;color:var(--t3);font-size:10px;cursor:pointer;padding:0 2px">x</button>'
+      }
+      html += '</div>'
+    })
+    html += '</div>'
+  }
+  // Log time form
+  html += '<div style="display:flex;gap:6px;align-items:center">'
+  html += '<input id="time_hrs_' + t.id + '" type="number" min="0.25" max="24" step="0.25" placeholder="Hours" style="width:70px;font-size:10px;padding:5px 7px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">'
+  html += '<input id="time_note_' + t.id + '" placeholder="Note (optional)" style="flex:1;font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">'
+  html += '<button onclick="logTime(\'' + t.id + '\')" style="background:var(--ac);border:none;border-radius:6px;color:#fff;font-size:10px;padding:5px 10px;cursor:pointer;white-space:nowrap">Log</button>'
+  html += '</div>'
+  html += '</div>'
+  return html
+}
+
+async function logTime(taskId){
+  var hrs  = parseFloat(document.getElementById('time_hrs_' + taskId)?.value || '0')
+  var note = document.getElementById('time_note_' + taskId)?.value?.trim() || ''
+  if(!hrs || hrs <= 0){ toast('Enter hours greater than 0','error'); return }
+  try{
+    var log = await api('/api/tasks/' + taskId + '/time', {method:'POST', body:JSON.stringify({hours:hrs, note})})
+    var t   = state.tasks.find(function(x){ return x.id===taskId })
+    if(t){ if(!t.time_logs) t.time_logs=[]; t.time_logs.unshift(log) }
+    renderDetailBody(t)
+    toast(hrs.toFixed(1) + ' hrs logged')
+  }catch(e){ toast(e.message,'error') }
+}
+
+async function deleteTimeLog(taskId, logId){
+  try{
+    await api('/api/tasks/' + taskId + '/time/' + logId, {method:'DELETE'})
+    var t = state.tasks.find(function(x){ return x.id===taskId })
+    if(t) t.time_logs = (t.time_logs||[]).filter(function(l){ return l.id!==logId })
+    renderDetailBody(t)
+  }catch(e){ toast(e.message,'error') }
+}
+
+// ══════════════════════════════════════════════════════════════
+// WATCHERS
+// ══════════════════════════════════════════════════════════════
+function buildWatchers(t){
+  var watchers = (t.watchers||[]).map(function(w){ return w.user || w }).filter(Boolean)
+  var userId   = state.user && (state.user.sub || state.user.id)
+  var watching = watchers.some(function(w){ return w.id === userId })
+  var html = '<div style="display:flex;align-items:center;gap:10px;padding:8px 0">'
+  html += '<div class="det-sec-title" style="margin:0;flex:1">Watchers</div>'
+  // Watch/unwatch button
+  html += '<button onclick="toggleWatch(\'' + t.id + '\',' + watching + ')" '
+  html += 'style="font-size:9px;padding:3px 10px;border-radius:5px;cursor:pointer;border:1px solid ' + (watching?'var(--ac)':'var(--bd)') + ';background:' + (watching?'rgba(79,142,255,.15)':'none') + ';color:' + (watching?'var(--ac)':'var(--t3)') + '">'
+  html += (watching ? '\u2713 Watching' : '+ Watch') + '</button>'
+  html += '</div>'
+  if(watchers.length){
+    html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px">'
+    watchers.forEach(function(w){
+      html += '<div class="avatar" title="' + esc(w.name) + '" style="width:22px;height:22px;font-size:8px;background:' + w.color + '">' + esc(w.initials) + '</div>'
+    })
+    html += '</div>'
+  } else {
+    html += '<div style="font-size:10px;color:var(--t3);margin-bottom:6px">No watchers yet</div>'
+  }
+  return html
+}
+
+async function toggleWatch(taskId, currentlyWatching){
+  try{
+    var result = await api('/api/tasks/' + taskId + '/watch', {method: currentlyWatching?'DELETE':'POST'})
+    // Refresh watchers
+    var watchers = await api('/api/tasks/' + taskId + '/watchers')
+    var t = state.tasks.find(function(x){ return x.id===taskId })
+    if(t) t.watchers = watchers.map(function(w){ return {user:w} })
+    renderDetailBody(t)
+    toast(result.watching ? 'Watching this task' : 'Stopped watching')
+  }catch(e){ toast(e.message,'error') }
+}
+
+// ══════════════════════════════════════════════════════════════
+// TASK TEMPLATES
+// ══════════════════════════════════════════════════════════════
+var state_templates = []
+
+async function openTemplateModal(){
+  // Load templates
+  try{
+    state_templates = await api('/api/templates')
+  }catch(e){ state_templates = [] }
+  renderTemplateModal()
+  openModal('templateModal')
+}
+
+function renderTemplateModal(){
+  var listEl = document.getElementById('tmplList')
+  if(!listEl) return
+  if(!state_templates.length){
+    listEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--t3);font-size:11px">No templates yet. Create one below.</div>'
+    return
+  }
+  listEl.innerHTML = state_templates.map(function(tmpl){
+    var taskCount = (tmpl.tasks||[]).length
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--bd)">' +
+      '<div style="flex:1">' +
+        '<div style="font-size:12px;font-weight:600;color:var(--t1)">' + esc(tmpl.name) + (tmpl.category?' <span style="font-size:9px;color:var(--t3)">'+esc(tmpl.category)+'</span>':'') + '</div>' +
+        '<div style="font-size:10px;color:var(--t3)">' + taskCount + ' task' + (taskCount!==1?'s':'') + (tmpl.description?' \u00B7 '+esc(tmpl.description):'') + '</div>' +
+      '</div>' +
+      '<button onclick="applyTemplate(\'' + tmpl.id + '\')" style="font-size:9px;padding:4px 10px;background:var(--ac);border:none;border-radius:5px;color:#fff;cursor:pointer">Apply</button>' +
+      '<button onclick="deleteTemplate(\'' + tmpl.id + '\')" style="font-size:9px;padding:4px 8px;background:none;border:1px solid rgba(255,71,87,.3);border-radius:5px;color:var(--rd);cursor:pointer">Del</button>' +
+    '</div>'
+  }).join('')
+}
+
+async function applyTemplate(tmplId){
+  if(state.activeProject === 'all'){
+    toast('Select a project first, then apply a template','error')
+    return
+  }
+  var proj = state.projects.find(function(p){ return p.id===state.activeProject })
+  var tmpl = state_templates.find(function(t){ return t.id===tmplId })
+  if(!confirm('Apply template "' + (tmpl?tmpl.name:'') + '" to project "' + (proj?proj.name:'') + '"? This will create ' + ((tmpl&&tmpl.tasks)?tmpl.tasks.length:0) + ' new tasks.')) return
+  try{
+    var result = await api('/api/templates/' + tmplId + '/apply', {method:'POST', body:JSON.stringify({project_id:state.activeProject})})
+    result.tasks.forEach(function(t){ state.tasks.unshift(t) })
+    closeModal('templateModal')
+    renderView(); renderSidebar()
+    toast(result.created + ' tasks created from template')
+  }catch(e){ toast(e.message,'error') }
+}
+
+async function deleteTemplate(tmplId){
+  var tmpl = state_templates.find(function(t){ return t.id===tmplId })
+  if(!confirm('Delete template "' + (tmpl?tmpl.name:'') + '"?')) return
+  try{
+    await api('/api/templates/' + tmplId, {method:'DELETE'})
+    state_templates = state_templates.filter(function(t){ return t.id!==tmplId })
+    renderTemplateModal()
+    toast('Template deleted')
+  }catch(e){ toast(e.message,'error') }
+}
+
+// Template task rows for the create form
+var tmplTaskRows = []
+
+function addTemplateTaskRow(){
+  tmplTaskRows.push({title:'', status:'Backlog', priority:'Medium'})
+  renderTemplateTaskRows()
+}
+
+function removeTemplateTaskRow(i){
+  tmplTaskRows.splice(i,1)
+  renderTemplateTaskRows()
+}
+
+function renderTemplateTaskRows(){
+  var el = document.getElementById('tmplTaskRows')
+  if(!el) return
+  if(!tmplTaskRows.length){
+    el.innerHTML = '<div style="font-size:10px;color:var(--t3);padding:8px 0">No tasks added yet.</div>'
+    return
+  }
+  el.innerHTML = tmplTaskRows.map(function(row, i){
+    return '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">' +
+      '<input value="' + esc(row.title) + '" placeholder="Task title" oninput="tmplTaskRows[' + i + '].title=this.value" style="flex:1;font-size:10px;padding:5px 8px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">' +
+      '<select onchange="tmplTaskRows[' + i + '].status=this.value" style="font-size:10px;padding:5px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">' +
+        state.statuses.map(function(s){ return '<option value="' + esc(s.name) + '"' + (row.status===s.name?' selected':'') + '>' + esc(s.name) + '</option>' }).join('') +
+      '</select>' +
+      '<select onchange="tmplTaskRows[' + i + '].priority=this.value" style="font-size:10px;padding:5px;background:var(--s3);border:1px solid var(--bd);border-radius:6px;color:var(--t1)">' +
+        state.priorities.map(function(p){ return '<option value="' + esc(p.name) + '"' + (row.priority===p.name?' selected':'') + '>' + esc(p.name) + '</option>' }).join('') +
+      '</select>' +
+      '<button onclick="removeTemplateTaskRow(' + i + ')" style="background:none;border:none;color:var(--rd);cursor:pointer;font-size:13px;padding:0 3px">x</button>' +
+    '</div>'
+  }).join('')
+}
+
+async function saveTemplate(){
+  var name     = (document.getElementById('tmpl_name')||{}).value?.trim()
+  var category = (document.getElementById('tmpl_cat')||{}).value?.trim()
+  var desc     = (document.getElementById('tmpl_desc')||{}).value?.trim()
+  if(!name){ toast('Template name required','error'); return }
+  var validTasks = tmplTaskRows.filter(function(r){ return r.title.trim() })
+  if(!validTasks.length){ toast('Add at least one task','error'); return }
+  try{
+    var tmpl = await api('/api/templates', {method:'POST', body:JSON.stringify({
+      name, category:category||'', description:desc||'', tasks:validTasks
+    })})
+    state_templates.push(Object.assign({}, tmpl, {tasks:validTasks}))
+    tmplTaskRows = []
+    if(document.getElementById('tmpl_name')) document.getElementById('tmpl_name').value=''
+    if(document.getElementById('tmpl_cat'))  document.getElementById('tmpl_cat').value=''
+    if(document.getElementById('tmpl_desc')) document.getElementById('tmpl_desc').value=''
+    renderTemplateModal()
+    renderTemplateTaskRows()
+    toast('Template saved: ' + name)
+    // Hide form
+    var form = document.getElementById('tmplCreateForm')
+    if(form) form.style.display='none'
+  }catch(e){ toast(e.message,'error') }
+}
+
+function toggleTemplateForm(){
+  var form = document.getElementById('tmplCreateForm')
+  if(!form) return
+  var showing = form.style.display !== 'none'
+  form.style.display = showing ? 'none' : 'block'
+  if(!showing){ tmplTaskRows=[]; renderTemplateTaskRows() }
+}
+
+// ══════════════════════════════════════════════════════════════
+// RECURRING TASKS
+// ══════════════════════════════════════════════════════════════
+function buildRecurring(t){
+  var html = ''
+  if(t.recur_type){
+    var label = {daily:'Daily',weekly:'Weekly',monthly:'Monthly'}[t.recur_type] || t.recur_type
+    var interval = t.recur_interval || 1
+    var next = t.recur_next ? new Date(t.recur_next).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : 'Not set'
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0">'
+    html += '<span style="font-size:10px;color:var(--ac);background:rgba(79,142,255,.1);border:1px solid rgba(79,142,255,.3);padding:2px 8px;border-radius:10px">'
+    html += '\u21BA Repeats every ' + (interval>1?interval+' ':'') + label.toLowerCase() + ' \u00B7 Next: ' + next
+    html += '</span>'
+    html += '</div>'
+  }
+  return html
+}
+
+// ══════════════════════════════════════════════════════════════
+// @MENTION HELPERS
+// ══════════════════════════════════════════════════════════════
+function setupMentions(textareaId, taskId){
+  var ta = document.getElementById(textareaId)
+  if(!ta) return
+  ta.addEventListener('input', function(){
+    var val = ta.value
+    var atPos = val.lastIndexOf('@')
+    if(atPos === -1){ hideMentionDrop(); return }
+    var query = val.slice(atPos+1).toLowerCase()
+    if(query.includes(' ')){ hideMentionDrop(); return }
+    var matches = state.users.filter(function(u){ return u.name.toLowerCase().startsWith(query) }).slice(0,5)
+    if(!matches.length){ hideMentionDrop(); return }
+    showMentionDrop(matches, ta, atPos)
+  })
+  ta.addEventListener('keydown', function(e){
+    var drop = document.getElementById('mentionDrop')
+    if(!drop || drop.style.display==='none') return
+    if(e.key==='Escape'){ hideMentionDrop(); return }
+    var items = drop.querySelectorAll('.mention-item')
+    var cur   = drop.querySelector('.mention-item.on')
+    var idx   = cur ? Array.from(items).indexOf(cur) : -1
+    if(e.key==='ArrowDown'){ e.preventDefault(); var next=(idx+1)%items.length; items.forEach(function(el,i){ el.classList.toggle('on',i===next) }); return }
+    if(e.key==='ArrowUp'){   e.preventDefault(); var prev=(idx-1+items.length)%items.length; items.forEach(function(el,i){ el.classList.toggle('on',i===prev) }); return }
+    if(e.key==='Enter' && cur){ e.preventDefault(); cur.click(); return }
+  })
+}
+
+function showMentionDrop(users, ta, atPos){
+  var drop = document.getElementById('mentionDrop')
+  if(!drop) return
+  drop.innerHTML = users.map(function(u, i){
+    return '<div class="mention-item' + (i===0?' on':'') + '" onclick="insertMention(\'' + u.name + '\',' + atPos + ')" ' +
+      'style="display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;border-bottom:1px solid var(--bd)">' +
+      '<div class="avatar" style="width:20px;height:20px;font-size:8px;background:' + u.color + '">' + esc(u.initials) + '</div>' +
+      '<span style="font-size:11px;color:var(--t1)">' + esc(u.name) + '</span>' +
+    '</div>'
+  }).join('')
+  // Position near textarea
+  var rect = ta.getBoundingClientRect()
+  drop.style.display = 'block'
+  drop.style.top     = (rect.bottom + window.scrollY + 2) + 'px'
+  drop.style.left    = (rect.left  + window.scrollX) + 'px'
+  drop.style.width   = rect.width + 'px'
+}
+
+function hideMentionDrop(){
+  var drop = document.getElementById('mentionDrop')
+  if(drop) drop.style.display = 'none'
+}
+
+function insertMention(name, atPos){
+  var ta = document.getElementById('commentInput')
+  if(!ta) return
+  var val    = ta.value
+  var before = val.slice(0, atPos)
+  var after  = val.slice(val.lastIndexOf('@') + (val.slice(atPos+1).match(/^\S*/)||[''])[0].length + 1)
+  ta.value   = before + '@' + name + ' ' + after
+  ta.focus()
+  hideMentionDrop()
+}
+
+
+// ==============================================================
+// INIT
+// ==============================================================
+boot()
+setInterval(poll, 30000)
+</script>
+</body>
+</html>

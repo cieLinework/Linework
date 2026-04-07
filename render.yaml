@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: linework
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: SUPABASE_URL
+        value: https://ugtpdlgxqclhrxgxespl.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVndHBkbGd4cWNsaHJ4Z3hlc3BsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0Mzc3MjMsImV4cCI6MjA4OTAxMzcyM30.3RWzZcMp2HEg6jaLMVGZ_ADjP71_3_HAsNOVMe-zYrA
+      - key: SUPABASE_SERVICE_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVndHBkbGd4cWNsaHJ4Z3hlc3BsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzQzNzcyMywiZXhwIjoyMDg5MDEzNzIzfQ.FNmKD8ghFbb84YBc7xbsfgudqC2_p8PAAzyLrSJg6xw
+      - key: JWT_SECRET
+        value: linework-cie-2026-secret
+      - key: APP_URL
+        sync: false
