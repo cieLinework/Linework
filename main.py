@@ -23,6 +23,21 @@ app = Flask(__name__, static_folder='static')
 CORS(app, supports_credentials=True)
 db = create_client(SUPABASE_URL, SUPABASE_SERVICE)
 
+@app.route('/health')
+def health():
+    """Health check - shows config status without exposing secrets."""
+    try:
+        db.table('users').select('id', count='exact').limit(1).execute()
+        db_status = 'connected'
+    except Exception as e:
+        db_status = f'error: {str(e)[:100]}'
+    return jsonify({
+        'status': 'ok',
+        'supabase_url': SUPABASE_URL[:40] + '...',
+        'db': db_status,
+        'python': __import__('sys').version
+    })
+
 
 # ── Auth helpers ──────────────────────────────────────────────
 def hash_pin(pin: str) -> str:
